@@ -1,2 +1,18 @@
+# Keep the dashboard out of search results, but let link-preview crawlers in so a
+# shared link unfurls with a title, description and card image.
+User-agent: Slackbot
+Allow: /
+User-agent: Slackbot-LinkExpanding
+Allow: /
+User-agent: Twitterbot
+Allow: /
+User-agent: facebookexternalhit
+Allow: /
+User-agent: LinkedInBot
+Allow: /
+User-agent: WhatsApp
+Allow: /
+User-agent: Discordbot
+Allow: /
 User-agent: *
 Disallow: /
