@@ -1,18 +1,6 @@
-# Keep the dashboard out of search results, but let link-preview crawlers in so a
-# shared link unfurls with a title, description and card image.
-User-agent: Slackbot
-Allow: /
-User-agent: Slackbot-LinkExpanding
-Allow: /
-User-agent: Twitterbot
-Allow: /
-User-agent: facebookexternalhit
-Allow: /
-User-agent: LinkedInBot
-Allow: /
-User-agent: WhatsApp
-Allow: /
-User-agent: Discordbot
-Allow: /
+# Everything may fetch this page. Keeping it out of search is done with a noindex meta
+# tag in the page itself, not by blocking crawlers here: a blanket Disallow also blocks
+# the AI reading tools prospects use to review a sponsorship, which cost us a real
+# conversation in October 2026.
 User-agent: *
-Disallow: /
+Allow: /

@@ -19,10 +19,43 @@
 <meta name="twitter:title" content="Sponsor Workspace6">
 <meta name="twitter:description" content="28,178 ecommerce operators read DTC News, plus 1,124 vetted founders running $19.0B. Every figure open to inspection.">
 <meta name="twitter:image" content="https://sponsor.workspace6.io/og.png">
+<meta name="robots" content="noindex, follow">
 <meta name="theme-color" content="#265c51">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 </head>
 <body>
+<noscript><section>
+<h2>Workspace6 audience summary</h2>
+<p>Figures as at 2026-10-21. The full dashboard needs JavaScript; these are the headline numbers.</p>
+<h3>Newsletter: DTC News by Workspace6</h3>
+<ul>
+<li>Active subscribers: 28,178</li>
+<li>Reach per issue: 14,524 (each issue is sent to subscribers who opened in the last 60 days)</li>
+<li>Open rate: 51.68% over the last 90 days</li>
+<li>Net growth: +3,508 in the last 90 days</li>
+<li>Countries represented: 107; top markets United States 86.46%, United Kingdom 1.92%, Canada 1.77%, Australia 1.29%, India 0.95%</li>
+<li>Lifetime: 196 issues, 1,444,090 emails delivered, 591,348 unique opens</li>
+</ul>
+<h3>Community: Workspace6 Plus</h3>
+<ul>
+<li>Vetted members: 1,124</li>
+<li>Brand founders or officers: 99.5%</li>
+<li>Median member revenue: $5,000,000 trailing twelve months</li>
+<li>Combined member revenue: $19.0 billion across 1,120 brands</li>
+<li>97.0% turn over at least $1m a year; 30.7% clear $10m</li>
+<li>Top verticals: CPG 24.8%, Apparel & Accessories 24.7%, Home, Furniture & Decor 10.9%, Beauty & Personal Care 10.1%, Sports, Fitness & Outdoors 9.8%, Supplements & Nutrition 6.7%</li>
+<li>Head offices resolved for 748 members across 32 countries; top United States 66.6%, Australia 9.4%, United Kingdom 7.4%, Canada 5.6%</li>
+</ul>
+<h3>Sponsorship results</h3>
+<ul>
+<li>52 sponsors across 180 issues; every issue we publish carries one</li>
+<li>65% of sponsors have booked more than once</li>
+<li>A sponsor takes 1 in 9 of all the clicks in their issue (median across 174 measured issues)</li>
+<li>9,269 clicks delivered to sponsors in total</li>
+<li>Figures are aggregated; no individual sponsor's results are published</li>
+</ul>
+<p>Contact: sponsorships via workspace6.io</p>
+</section></noscript>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
@@ -246,7 +279,7 @@ details.listtoggle:not([open])>table{display:none !important;}
   <div class="hero">
     <div class="lbl">Partner with Workspace6</div>
     <h1>Who you reach when you sponsor us.</h1>
-    <p>Two audiences, measured separately. The newsletter is reach: 28,178 ecommerce operators who opted in. The community is depth: 1,116 vetted brand founders running a combined $18.7 billion in revenue. Every figure below comes from our own systems, and the method for each one is stated at the bottom.</p>
+    <p id="hero-sub"></p>
   </div>
 </div>
 
@@ -581,6 +614,13 @@ const money = n => n >= 1e9 ? '$' + (n / 1e9).toFixed(1) + 'B'
                  : n >= 1e6 ? '$' + (n / 1e6).toFixed(1) + 'M'
                  : '$' + fmt(Math.round(n));
 const N = D.nl, C = D.cm;
+/* The hero sentence used to be hardcoded prose and drifted out of step with the data.
+   It is the one line a reader without JavaScript can see, so it must never be stale. */
+set('hero-sub', `Two audiences, measured separately. The newsletter is reach: ${fmt(N.active)} `
+  + `ecommerce operators who opted in. The community is depth: ${fmt(C.members)} vetted brand `
+  + `founders running a combined ${money(C.total).replace('$','$').replace('B',' billion')} in `
+  + `revenue. Every figure below comes from our own systems, and the method for each one is `
+  + `stated at the bottom.`);
 set('nl-active', fmt(N.active));
 set('nl-net', (N.net_3mo >= 0 ? '+' : '') + fmt(N.net_3mo) + ' net in 90 days');
 set('nl-open', (+N.open_rate_3mo).toFixed(1) + '%');
