@@ -120,12 +120,9 @@ header{background:var(--white); border-bottom:1px solid var(--line);}
   border-bottom:1px solid transparent; transition:border-color .2s, box-shadow .2s;}
 .togglebar.stuck{border-bottom-color:var(--line); box-shadow:0 8px 20px -18px rgba(32,32,32,.5);}
 .togglebar .wrap{position:relative; display:flex; align-items:center; justify-content:center;
-  gap:18px; padding-top:12px; padding-bottom:12px;}
-/* The tabs and the button are centred as ONE group, with equal space either side. Centring
-   the tabs alone leaves a hole on the left and hangs the button off the right, which reads
-   as the whole bar being shoved right. The badge floats over the left margin so it never
-   pushes the group off centre. */
-.barmark{position:absolute; left:0; top:50%; width:30px; height:30px;
+  padding-top:12px; padding-bottom:12px;}
+/* the full wordmark scrolls away above; its VI mark takes over in the locked bar */
+.barmark{position:absolute; left:26px; top:50%; width:30px; height:30px;
   transform:translateY(-50%) scale(.55); transform-origin:left center;
   opacity:0; pointer-events:none; transition:opacity .22s ease, transform .22s ease;}
 .togglebar.stuck .barmark{opacity:1; transform:translateY(-50%) scale(1);}
@@ -137,18 +134,6 @@ header{background:var(--white); border-bottom:1px solid var(--line);}
   background:transparent; color:var(--ink-2); transition:background .16s,color .16s;}
 .toggle button[aria-selected="true"]{background:var(--green); color:var(--white);}
 .toggle button:focus-visible{outline:2px solid var(--green); outline-offset:2px;}
-/* The one thing a prospect is here to do. In the sticky bar so it rides the scroll and
-   shows on every tab without being repeated three times. */
-.barcta{flex:0 0 auto; display:inline-flex; align-items:center; gap:9px;
-  background:var(--green); color:var(--white); font-family:Inter,sans-serif; font-size:11px;
-  font-weight:600; letter-spacing:.12em; text-transform:uppercase; padding:12px 20px;
-  border-radius:999px; text-decoration:none; white-space:nowrap;
-  transition:background .16s, box-shadow .16s;}
-.barcta:hover{background:#1c453c; box-shadow:0 6px 16px -10px rgba(38,92,81,.9);}
-.barcta:focus-visible{outline:2px solid var(--green); outline-offset:3px;}
-.barcta .ar{font-size:13px; line-height:1;}
-.barcta .short{display:none;}
-.toggle button .short{display:none;}
 
 .stats{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin:24px 0 0;}
 .stats.five{grid-template-columns:repeat(5,1fr);}
@@ -249,8 +234,31 @@ details.listtoggle .bars{margin-top:18px;}
 .lgtip .vt2{color:var(--mint); font-size:11px; letter-spacing:.08em; text-transform:uppercase;}
 .lgtip dl{display:grid; grid-template-columns:auto auto; gap:2px 14px; margin:7px 0 0; font-size:12px;}
 .lgtip dt{color:rgba(255,255,255,.62);}
+/* The inquire button floats rather than living in the sticky bar. In the bar it had to share
+   a fixed rail with three centred tabs, so it was always pulling the row off balance one way
+   or the other. Floating, it owns its own space, the bar keeps its original centred flow, and
+   the button is on screen the whole way down. */
+.floatcta{position:fixed; right:28px; bottom:28px; z-index:40; display:inline-flex;
+  align-items:center; gap:11px; background:var(--green); color:var(--white);
+  font-family:Inter,sans-serif; font-size:11px; font-weight:600; letter-spacing:.12em;
+  text-transform:uppercase; padding:16px 24px; border-radius:999px; text-decoration:none;
+  box-shadow:0 10px 30px -12px rgba(26,64,56,.55), 0 2px 6px rgba(26,64,56,.18);
+  opacity:0; transform:translateY(14px); pointer-events:none;
+  transition:opacity .28s ease, transform .28s ease, background .16s, box-shadow .16s;}
+.floatcta.on{opacity:1; transform:none; pointer-events:auto;}
+.floatcta:hover{background:#1c453c;
+  box-shadow:0 14px 34px -12px rgba(26,64,56,.65), 0 2px 6px rgba(26,64,56,.2);}
+.floatcta:focus-visible{outline:2px solid var(--green); outline-offset:4px;}
+.floatcta .ar{font-size:13px; line-height:1;}
+@media (max-width:640px){
+  /* thumb zone: full width along the bottom, clear of the home indicator */
+  .floatcta{right:14px; left:14px; bottom:calc(14px + env(safe-area-inset-bottom));
+    justify-content:center; padding:17px 20px;}
+  .method{padding-bottom:150px;}
+}
+@media (prefers-reduced-motion:reduce){ .floatcta{transition:opacity .01s;} }
 .note{font-size:12px; color:var(--ink-3); margin-top:16px; line-height:1.55; max-width:70ch;}
-.method{margin:54px 0 0; border-top:1px solid var(--line); padding:22px 0 64px;}
+.method{margin:54px 0 0; border-top:1px solid var(--line); padding:22px 0 128px;}
 .method>summary{cursor:pointer; list-style:none; display:inline-flex; align-items:center; gap:10px;}
 .method>summary::-webkit-details-marker{display:none;}
 .method>summary::before{content:"+"; display:inline-grid; place-items:center; width:19px; height:19px;
@@ -271,10 +279,6 @@ details.listtoggle:not([open])>table{display:none !important;}
    inside their own pill rather than pushing the bar into a horizontal scroll. */
 @media (max-width:860px){
   .barmark{display:none;}
-
-  .barcta .full{display:none;} .barcta .short{display:inline;}
-  .togglebar .wrap{gap:12px; padding-left:16px; padding-right:16px;}
-
   .cloud{grid-template-columns:repeat(3,1fr); gap:10px;}
   .lg.wide{grid-column:span 1;}
   .lg.wide img{max-height:38px;}
@@ -285,18 +289,6 @@ details.listtoggle:not([open])>table{display:none !important;}
   .method dt{margin-top:10px;}
   .bar{grid-template-columns:minmax(96px,150px) 1fr auto; gap:10px;}
   .bar .vl{min-width:78px;}
-}
-/* Narrower than this the full labels will not fit one centred row, so both shorten. */
-@media (max-width:1000px){
-  .toggle button .full{display:none;} .toggle button .short{display:inline;}
-  .barcta .full{display:none;} .barcta .short{display:inline;}
-  .toggle button{padding:11px 16px;}
-}
-/* On a phone the row cannot hold both, so the button centres on its own line underneath. */
-@media (max-width:560px){
-  .togglebar .wrap{flex-direction:column; gap:10px;}
-  .barcta .full{display:inline;} .barcta .short{display:none;}
-  .toggle button{padding:10px 13px; font-size:10px;}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none !important;}}
 </style>
@@ -321,14 +313,10 @@ details.listtoggle:not([open])>table{display:none !important;}
   <div class="wrap">
     <span class="barmark" aria-hidden="true"><svg width="1080" height="1080" viewBox="0 0 1080 1080" fill="none" xmlns="http://www.w3.org/2000/svg"> <rect width="1080" height="1080" rx="540" fill="#265C51"/> <path d="M559.553 320.048H604.622L414.298 763.91H386.627L242.373 418.694C231.833 391.725 221.946 372.334 212.727 360.494C204.161 348.655 190.326 342.076 171.22 340.77V316.105C181.106 316.771 190.326 317.424 198.891 318.077C208.111 318.742 217.663 319.395 227.55 320.048H307.589C319.436 319.395 330.964 318.742 342.171 318.077C354.019 317.424 367.201 316.771 381.69 316.105V340.77C362.585 342.076 348.429 344.713 339.209 348.655C329.977 352.597 325.374 360.161 325.374 371.349C325.374 380.551 329.323 395.667 337.221 416.71L425.559 630.744L559.553 320.048Z" fill="white"/> <path d="M693.374 763.91H599.539L742.779 416.71C750.678 395.667 754.627 380.551 754.627 371.349C754.627 360.161 750.024 352.597 740.791 348.655C731.572 344.713 717.416 342.076 698.31 340.77V316.105C712.8 316.771 725.982 317.424 737.829 318.077C749.037 318.742 760.564 319.395 772.412 320.048H852.451C862.337 319.395 871.89 318.742 881.109 318.077C889.675 317.424 898.894 316.771 908.781 316.105V340.77C889.675 342.076 875.839 348.655 867.274 360.494C858.054 372.334 848.168 391.725 837.628 418.694L693.374 763.91Z" fill="white"/> </svg></span>
     <div class="toggle" role="tablist" aria-label="Choose an audience">
-      <button role="tab" id="tab-nl" aria-controls="p-nl" aria-selected="true"><span class="full">Newsletter audience</span><span class="short">Newsletter</span></button>
-      <button role="tab" id="tab-cm" aria-controls="p-cm" aria-selected="false"><span class="full">Community members</span><span class="short">Community</span></button>
-      <button role="tab" id="tab-sp" aria-controls="p-sp" aria-selected="false"><span class="full">Sponsor results</span><span class="short">Sponsors</span></button>
+      <button role="tab" id="tab-nl" aria-controls="p-nl" aria-selected="true">Newsletter audience</button>
+      <button role="tab" id="tab-cm" aria-controls="p-cm" aria-selected="false">Community members</button>
+      <button role="tab" id="tab-sp" aria-controls="p-sp" aria-selected="false">Sponsor results</button>
     </div>
-    <a class="barcta" href="https://sponsors.workspace6.io" target="_blank" rel="noopener">
-      <span class="full">Inquire about sponsorship</span><span class="short">Inquire</span>
-      <span class="ar" aria-hidden="true">&rarr;</span>
-    </a>
   </div>
 </div>
 
@@ -457,6 +445,10 @@ details.listtoggle:not([open])>table{display:none !important;}
       </div>
     </section>
   </div>
+
+  <a class="floatcta" id="floatcta" href="https://sponsors.workspace6.io" target="_blank" rel="noopener">
+    Inquire about sponsorship <span class="ar" aria-hidden="true">&rarr;</span>
+  </a>
 
   <details class="method">
     <summary><h3>Where these numbers come from</h3></summary>
@@ -726,8 +718,12 @@ document.getElementById('sptable').innerHTML = CLOUD.map(r =>
 const tabs = [['tab-nl', 'p-nl'], ['tab-cm', 'p-cm'], ['tab-sp', 'p-sp']];
 const bar = document.getElementById('togglebar');
 /* the bar only locks in once the masthead has scrolled past; that is when the VI mark appears */
-new IntersectionObserver(([e]) => bar.classList.toggle('stuck', !e.isIntersecting),
-                         { rootMargin: '0px 0px 0px 0px', threshold: 0 })
+const floatcta = document.getElementById('floatcta');
+new IntersectionObserver(([e]) => {
+  bar.classList.toggle('stuck', !e.isIntersecting);
+  /* the button appears once the hero is behind you, so the first screen stays clean */
+  floatcta.classList.toggle('on', !e.isIntersecting);
+}, { rootMargin: '0px 0px 0px 0px', threshold: 0 })
   .observe(document.getElementById('sentinel'));
 
 function select(t){
