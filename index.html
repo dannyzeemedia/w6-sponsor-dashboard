@@ -119,12 +119,13 @@ header{background:var(--white); border-bottom:1px solid var(--line);}
   backdrop-filter:saturate(1.4) blur(10px); -webkit-backdrop-filter:saturate(1.4) blur(10px);
   border-bottom:1px solid transparent; transition:border-color .2s, box-shadow .2s;}
 .togglebar.stuck{border-bottom-color:var(--line); box-shadow:0 8px 20px -18px rgba(32,32,32,.5);}
-.togglebar .wrap{position:relative; display:flex; align-items:center; gap:14px;
+.togglebar .wrap{position:relative; display:flex; align-items:center; gap:18px;
   padding-top:12px; padding-bottom:12px;}
 /* Three real slots rather than a centred toggle with things floated over it: the CTA used
    to sit on top of the third tab at desktop width. */
-.barleft{flex:0 0 32px; height:30px;}
-.bartabs{flex:1 1 auto; display:flex; justify-content:center; min-width:0;}
+.barside{flex:1 1 0; min-width:0; display:flex; align-items:center;}
+.barside.r{justify-content:flex-end;}
+.bartabs{flex:0 0 auto; display:flex; justify-content:center;}
 /* the full wordmark scrolls away above; its VI mark takes over in the locked bar */
 .barmark{width:30px; height:30px; transform:scale(.55); transform-origin:left center;
   opacity:0; transition:opacity .22s ease, transform .22s ease;}
@@ -132,22 +133,23 @@ header{background:var(--white); border-bottom:1px solid var(--line);}
 .barmark svg{width:100%; height:100%; display:block; border-radius:50%;}
 .toggle{display:inline-flex; gap:5px; padding:5px; background:var(--mint-soft);
   border:1px solid var(--line); border-radius:999px;}
-.toggle button{font-family:Inter,sans-serif; font-size:11px; font-weight:600; letter-spacing:.12em;
-  text-transform:uppercase; border:0; cursor:pointer; padding:11px 20px; border-radius:999px;
+.toggle button{font-family:Inter,sans-serif; font-size:11px; font-weight:600; letter-spacing:.1em;
+  text-transform:uppercase; border:0; cursor:pointer; padding:11px 12px; border-radius:999px;
   background:transparent; color:var(--ink-2); transition:background .16s,color .16s;}
 .toggle button[aria-selected="true"]{background:var(--green); color:var(--white);}
 .toggle button:focus-visible{outline:2px solid var(--green); outline-offset:2px;}
 /* The one thing a prospect is here to do. Lives in the sticky bar, so it rides the scroll
    and shows on every tab without being repeated three times. */
 .barcta{flex:0 0 auto; display:inline-flex; align-items:center; gap:9px;
-  background:var(--green); color:var(--white); font-family:Inter,sans-serif; font-size:11px;
-  font-weight:600; letter-spacing:.12em; text-transform:uppercase; padding:12px 20px;
+  background:var(--green); color:var(--white); font-family:Inter,sans-serif; font-size:10px;
+  font-weight:600; letter-spacing:.08em; text-transform:uppercase; padding:12px 14px;
   border-radius:999px; text-decoration:none; white-space:nowrap;
   transition:background .16s, box-shadow .16s;}
 .barcta:hover{background:#1c453c; box-shadow:0 6px 16px -10px rgba(38,92,81,.9);}
 .barcta:focus-visible{outline:2px solid var(--green); outline-offset:3px;}
 .barcta .ar{font-size:13px; line-height:1;}
 .barcta .short{display:none;}
+.toggle button .short{display:none;}
 
 .stats{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin:24px 0 0;}
 .stats.five{grid-template-columns:repeat(5,1fr);}
@@ -266,8 +268,15 @@ details.listtoggle:not([open])>table{display:none !important;}
 .method dt{color:var(--ink-3); font-weight:500;}
 .method dd{margin:0;}
 [hidden]{display:none !important;}
+/* Below this the full label and three centred tabs cannot both fit in the rail, so the
+   button drops to one word rather than sliding over the tabs. */
+@media (max-width:1100px){
+  .barcta .full{display:none;} .barcta .short{display:inline;}
+}
+/* On a phone the three tabs plus the button cannot sit on one line. Let the tabs wrap
+   inside their own pill rather than pushing the bar into a horizontal scroll. */
 @media (max-width:860px){
-  .barleft{display:none;}
+  .barside:not(.r){display:none;}
   .barcta{padding:10px 14px; letter-spacing:.08em;}
   .barcta .full{display:none;} .barcta .short{display:inline;}
   .togglebar .wrap{gap:10px; padding-left:16px; padding-right:16px;}
@@ -282,6 +291,17 @@ details.listtoggle:not([open])>table{display:none !important;}
   .method dt{margin-top:10px;}
   .bar{grid-template-columns:minmax(96px,150px) 1fr auto; gap:10px;}
   .bar .vl{min-width:78px;}
+}
+/* Three tabs and a button will not share one row on a phone without shrinking the type
+   past legibility, so the button takes its own line underneath. */
+@media (max-width:640px){
+  .toggle button .full{display:none;} .toggle button .short{display:inline;}
+  .toggle button{font-size:10px; padding:10px 13px; letter-spacing:.06em;}
+  .togglebar .wrap{flex-direction:column; gap:9px; padding-top:10px; padding-bottom:10px;}
+  .bartabs{width:100%; justify-content:center;}
+  .barside.r{flex:0 0 auto; width:100%; justify-content:center;}
+  .barcta{font-size:10px; padding:11px 18px; letter-spacing:.08em;}
+  .barcta .full{display:inline;} .barcta .short{display:none;}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none !important;}}
 </style>
@@ -304,16 +324,16 @@ details.listtoggle:not([open])>table{display:none !important;}
 <div class="stickysentinel" id="sentinel"></div>
 <div class="togglebar" id="togglebar">
   <div class="wrap">
-    <span class="barleft"><span class="barmark" aria-hidden="true"><svg width="1080" height="1080" viewBox="0 0 1080 1080" fill="none" xmlns="http://www.w3.org/2000/svg"> <rect width="1080" height="1080" rx="540" fill="#265C51"/> <path d="M559.553 320.048H604.622L414.298 763.91H386.627L242.373 418.694C231.833 391.725 221.946 372.334 212.727 360.494C204.161 348.655 190.326 342.076 171.22 340.77V316.105C181.106 316.771 190.326 317.424 198.891 318.077C208.111 318.742 217.663 319.395 227.55 320.048H307.589C319.436 319.395 330.964 318.742 342.171 318.077C354.019 317.424 367.201 316.771 381.69 316.105V340.77C362.585 342.076 348.429 344.713 339.209 348.655C329.977 352.597 325.374 360.161 325.374 371.349C325.374 380.551 329.323 395.667 337.221 416.71L425.559 630.744L559.553 320.048Z" fill="white"/> <path d="M693.374 763.91H599.539L742.779 416.71C750.678 395.667 754.627 380.551 754.627 371.349C754.627 360.161 750.024 352.597 740.791 348.655C731.572 344.713 717.416 342.076 698.31 340.77V316.105C712.8 316.771 725.982 317.424 737.829 318.077C749.037 318.742 760.564 319.395 772.412 320.048H852.451C862.337 319.395 871.89 318.742 881.109 318.077C889.675 317.424 898.894 316.771 908.781 316.105V340.77C889.675 342.076 875.839 348.655 867.274 360.494C858.054 372.334 848.168 391.725 837.628 418.694L693.374 763.91Z" fill="white"/> </svg></span></span>
+    <span class="barside"><span class="barmark" aria-hidden="true"><svg width="1080" height="1080" viewBox="0 0 1080 1080" fill="none" xmlns="http://www.w3.org/2000/svg"> <rect width="1080" height="1080" rx="540" fill="#265C51"/> <path d="M559.553 320.048H604.622L414.298 763.91H386.627L242.373 418.694C231.833 391.725 221.946 372.334 212.727 360.494C204.161 348.655 190.326 342.076 171.22 340.77V316.105C181.106 316.771 190.326 317.424 198.891 318.077C208.111 318.742 217.663 319.395 227.55 320.048H307.589C319.436 319.395 330.964 318.742 342.171 318.077C354.019 317.424 367.201 316.771 381.69 316.105V340.77C362.585 342.076 348.429 344.713 339.209 348.655C329.977 352.597 325.374 360.161 325.374 371.349C325.374 380.551 329.323 395.667 337.221 416.71L425.559 630.744L559.553 320.048Z" fill="white"/> <path d="M693.374 763.91H599.539L742.779 416.71C750.678 395.667 754.627 380.551 754.627 371.349C754.627 360.161 750.024 352.597 740.791 348.655C731.572 344.713 717.416 342.076 698.31 340.77V316.105C712.8 316.771 725.982 317.424 737.829 318.077C749.037 318.742 760.564 319.395 772.412 320.048H852.451C862.337 319.395 871.89 318.742 881.109 318.077C889.675 317.424 898.894 316.771 908.781 316.105V340.77C889.675 342.076 875.839 348.655 867.274 360.494C858.054 372.334 848.168 391.725 837.628 418.694L693.374 763.91Z" fill="white"/> </svg></span></span>
     <div class="bartabs"><div class="toggle" role="tablist" aria-label="Choose an audience">
-      <button role="tab" id="tab-nl" aria-controls="p-nl" aria-selected="true">Newsletter audience</button>
-      <button role="tab" id="tab-cm" aria-controls="p-cm" aria-selected="false">Community members</button>
-      <button role="tab" id="tab-sp" aria-controls="p-sp" aria-selected="false">Sponsor results</button>
+      <button role="tab" id="tab-nl" aria-controls="p-nl" aria-selected="true"><span class="full">Newsletter audience</span><span class="short">Newsletter</span></button>
+      <button role="tab" id="tab-cm" aria-controls="p-cm" aria-selected="false"><span class="full">Community members</span><span class="short">Community</span></button>
+      <button role="tab" id="tab-sp" aria-controls="p-sp" aria-selected="false"><span class="full">Sponsor results</span><span class="short">Sponsors</span></button>
     </div></div>
-    <a class="barcta" href="https://sponsors.workspace6.io" target="_blank" rel="noopener">
+    <span class="barside r"><a class="barcta" href="https://sponsors.workspace6.io" target="_blank" rel="noopener">
       <span class="full">Inquire about sponsorship</span><span class="short">Inquire</span>
       <span class="ar" aria-hidden="true">&rarr;</span>
-    </a>
+    </a></span>
   </div>
 </div>
 
