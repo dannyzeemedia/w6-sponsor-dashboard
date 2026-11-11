@@ -292,6 +292,10 @@ details.listtoggle .bars{margin-top:18px;}
 }
 @media (prefers-reduced-motion:reduce){ .floatcta{transition:opacity .01s;} }
 .note{font-size:12px; color:var(--ink-3); margin-top:16px; line-height:1.55;}
+/* Logo.dev's free tier asks for a visible credit where its marks are used commercially.
+   Kept as small as it can be and still be a credit. */
+.bl-credit{display:block; margin-top:6px; font-size:9px; letter-spacing:.02em; opacity:.6;}
+.bl-credit a{color:inherit; text-decoration:underline;}
 .method{margin:54px 0 0; border-top:1px solid var(--line); padding:22px 0 128px;}
 .method>summary{cursor:pointer; list-style:none; display:inline-flex; align-items:center; gap:10px;}
 .method>summary::-webkit-details-marker{display:none;}
@@ -1089,9 +1093,11 @@ function blStart(){
   document.getElementById('bl-n').textContent = `${fmt(BL.counts.plus)} companies`;
   document.getElementById('bl-note').innerHTML =
     `Rebuilt from the Workspace6 membership on ${BL.built}. A company appears once, however `
-    + `many of its people are members. Logos are each brand's own mark, taken from their own `
-    + `website, shown to identify the company and remaining the property of their owners. `
-    + `Nothing about any individual member is published here.`;
+    + `many of its people are members. Logos are each brand's own mark, shown to identify the `
+    + `company and remaining the property of their owners. `
+    + `Nothing about any individual member is published here.`
+    + `<span class="bl-credit">Marks taken from each brand's own website, or supplied by `
+    + `<a href="https://logo.dev" target="_blank" rel="noopener noreferrer">Logo.dev</a>.</span>`;
   blFillVerticals();
   blDraw();
 }
