@@ -317,7 +317,13 @@ details.listtoggle:not([open])>table{display:none !important;}
 /* The brand list. Every tile is white and every mark is repaired to read on white when
    the page is built, never by painting the tile around it. Class names are prefixed so
    nothing here collides with the dashboard's own .bar, .chip or .find. */
-.bl-find{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin:0 0 4px;}
+/* The grid is thousands of pixels tall, so the filter cannot sit at the top and stay there:
+   a reader who scrolled into the list and wanted a different vertical had to scroll all the
+   way back up to reach it. The bar comes with them, under the tab bar, which is itself
+   sticky and would otherwise cover it. */
+.bl-find{display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+  position:sticky; top:73px; z-index:6; background:var(--white);
+  border-bottom:1px solid var(--line); margin:0 -26px; padding:12px 26px 13px;}
 .bl-find input{font-family:inherit; font-size:13.5px; color:var(--ink); width:220px;
   padding:10px 15px; border:1px solid var(--line); border-radius:999px; background:var(--white);}
 .bl-find input:focus{outline:none; border-color:var(--green);}
@@ -369,8 +375,17 @@ a.bl-chip:hover{border-color:var(--green); color:var(--green);}
 @media (max-width:620px){
   .bl-band.b0,.bl-band.b1{grid-template-columns:repeat(2,minmax(0,1fr));}
   .bl-band.b2{grid-template-columns:repeat(3,minmax(0,1fr));}
-  .bl-find input,.bl-find select{width:100%; max-width:none;}
-  .bl-find .c{margin-left:0;}
+  /* Side by side rather than stacked: a sticky bar two controls tall would take a
+     quarter of a phone screen before a single brand is shown. The live count comes out
+     of the bar on a phone and is read off the section heading instead. */
+  .bl-find{flex-wrap:nowrap; gap:8px; top:87px;}
+  /* The category names are long and the search box only has to say what it is, so the
+     room is split in the categories' favour. */
+  .bl-find input{width:auto; max-width:none; flex:1 1 36%; min-width:0; padding-inline:13px;
+    font-size:13px;}
+  .bl-find select{width:auto; max-width:none; flex:1 1 64%; min-width:0; font-size:13px;
+    padding-left:13px; padding-right:30px; background-position:right 11px center;}
+  .bl-find .c{display:none;}
 }
 
 /* On a phone the three tabs plus the button cannot sit on one line. Let the tabs wrap
@@ -1072,6 +1087,18 @@ function blDraw(){
   }
   document.getElementById('bl-shown').textContent =
     `${fmt(list.length)} ${list.length === 1 ? 'brand' : 'brands'}`;
+  document.getElementById('bl-n').textContent =
+    `${fmt(list.length)} ${list.length === 1 ? 'company' : 'companies'}`;
+}
+/* Filtering makes the page shorter. A reader who did it from inside the grid was left
+   wherever the browser could still scroll to, which was the footer: the list looked like
+   it had vanished. Whatever they change, the top of the list comes back to them. */
+function blKeepInView(){
+  const sec = document.getElementById('bl-n').closest('section');
+  const bar = document.querySelector('.togglebar');
+  const off = (bar ? bar.getBoundingClientRect().height : 0) + 8;
+  const top = sec.getBoundingClientRect().top;
+  if (top < off) window.scrollTo({top: window.scrollY + top - off, behavior: 'instant'});
 }
 function blFillVerticals(){
   const here = BL.brands.filter(b => b.g.includes('plus'));
@@ -1081,7 +1108,13 @@ function blFillVerticals(){
     .filter(o => o[2] > 0).sort((a, b) => b[2] - a[2] || a[1].localeCompare(b[1]));
   if (none) opts.push(['-', 'Not listed', none]);
   const sel = document.getElementById('bl-vert');
-  sel.innerHTML = `<option value="">All verticals (${fmt(here.length)})</option>`
+  /* On a phone there is room for about nineteen characters before the closed control
+     starts cutting its own label in half. "All verticals (1,243)" does not fit and looked
+     broken; "All (1,243)" does. The categories keep their counts: the list shows them in
+     full when it opens, and only the chosen one is ever shortened. */
+  const narrow = window.matchMedia('(max-width:620px)').matches;
+  if (narrow) document.getElementById('bl-q').placeholder = 'Search';
+  sel.innerHTML = `<option value="">${narrow ? 'All' : 'All verticals'} (${fmt(here.length)})</option>`
     + opts.map(([v, label, c]) => `<option value="${v}">${label} (${fmt(c)})</option>`).join('');
   sel.value = blVert;
 }
@@ -1101,8 +1134,10 @@ function blStart(){
   blFillVerticals();
   blDraw();
 }
-document.getElementById('bl-vert').addEventListener('change', e => { blVert = e.target.value; blDraw(); });
-document.getElementById('bl-q').addEventListener('input', e => { blQuery = e.target.value; blDraw(); });
+document.getElementById('bl-vert').addEventListener('change', e => {
+  blVert = e.target.value; blDraw(); blKeepInView(); });
+document.getElementById('bl-q').addEventListener('input', e => {
+  blQuery = e.target.value; blDraw(); blKeepInView(); });
 /* A link can point straight at a panel: /#community opens the community tab. The brand
    list used to be a page of its own and that address still redirects here. */
 const BYHASH = { '#newsletter': 'tab-nl', '#community': 'tab-cm', '#brands': 'tab-cm',
