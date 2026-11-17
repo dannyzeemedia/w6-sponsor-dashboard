@@ -726,6 +726,8 @@ a.bl-chip:hover{border-color:var(--green); color:var(--green);}
 .rc-price{display:inline-flex; align-items:baseline; gap:7px; background:var(--green);
   color:var(--white); border-radius:999px; padding:7px 15px; font-variant-numeric:tabular-nums;}
 .rc-price b{font-family:Gambetta,Georgia,serif; font-weight:400; font-size:18px;}
+button.rc-price{border:0; cursor:pointer; font-family:inherit;}
+button.rc-price:hover{background:var(--green-d);}
 .rc-price span{font-size:11.5px; color:var(--mint);}
 
 .rc-body{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:22px; margin-top:18px;
@@ -766,8 +768,9 @@ a.bl-chip:hover{border-color:var(--green); color:var(--green);}
 .rc-enq a{color:var(--green);}
 .rc-form{display:grid; gap:9px;}
 .rc-form input,.rc-form textarea{font-family:Inter,sans-serif; font-size:13.5px; padding:11px 14px;
-  border:1px solid var(--line); border-radius:14px; background:var(--white); color:var(--ink);
+  border:1px solid var(--mint); border-radius:14px; background:var(--mint-soft); color:var(--ink);
   width:100%;}
+.rc-form input::placeholder,.rc-form textarea::placeholder{color:var(--ink-3);}
 .rc-form textarea{min-height:74px; resize:vertical;}
 .rc-form input:focus,.rc-form textarea:focus{outline:2px solid var(--green); outline-offset:1px;
   border-color:transparent;}
@@ -1739,7 +1742,7 @@ function rcProduct(p){
   <section class="rc-prod" id="rc-${p.id}">
     <div class="rc-head">
       <h3>${p.name}</h3>
-      ${p.priceLabel ? `<span class="rc-price"><b>${p.priceLabel}</b></span>`
+      ${p.priceLabel ? `<button type="button" class="rc-price rc-price-go"><b>${p.priceLabel}</b></button>`
                      : `<span class="rc-price"><b>${rcMoney(p.from)}</b>`
                        + `${p.fromUnit ? `<span>${p.fromUnit}</span>` : ''}</span>`}
       <span class="ln">${rcFill(p.line)}</span>
@@ -1938,7 +1941,14 @@ document.getElementById('rc-products').addEventListener('submit', e => {
 
 document.getElementById('rc-products').addEventListener('click', e => {
   const b = e.target.closest('.rc-opt');
-  if (b) rcAdd(b.dataset.sku, 1);
+  if (b) { rcAdd(b.dataset.sku, 1); return; }
+  /* The Events pill is an instruction, not a price, so it has to do what it says. */
+  if (e.target.closest('.rc-price-go')) {
+    const f = document.getElementById('rc-interest');
+    if (!f) return;
+    f.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setTimeout(() => f.elements['who'] && f.elements['who'].focus({ preventScroll: true }), 400);
+  }
 });
 document.getElementById('rc-blines').addEventListener('click', e => {
   const b = e.target.closest('[data-sku]');
