@@ -708,6 +708,8 @@ a.bl-chip:hover{border-color:var(--green); color:var(--green);}
 .rc-row .ln{font-size:13px; color:var(--ink-2);}
 .rc-row .pr{font-family:Gambetta,Georgia,serif; font-size:19px; color:var(--green);
   font-variant-numeric:tabular-nums;}
+.rc-row .pr .pr-txt{font-family:Inter,sans-serif; font-size:12.5px; color:var(--ink-2);
+  letter-spacing:.01em;}
 .rc-row .pr small{display:block; font-family:Inter,sans-serif; font-size:11px; color:var(--ink-3);
   letter-spacing:.02em;}
 .rc-jump{font-family:Inter,sans-serif; font-size:11px; font-weight:600; letter-spacing:.1em;
@@ -760,8 +762,22 @@ a.bl-chip:hover{border-color:var(--green); color:var(--green);}
 .rc-opt.on .o-l{color:var(--mint);} .rc-opt.on .o-p{color:var(--white);} .rc-opt.on .o-n{color:var(--mint);}
 .rc-bundle{font-size:12px; color:var(--green); margin-top:11px; background:var(--mint-soft);
   border-radius:10px; padding:9px 12px;}
-.rc-enq{font-size:13.5px; color:var(--ink-2); margin:0;}
+.rc-enq{font-size:13.5px; color:var(--ink-2); margin:0 0 16px;}
 .rc-enq a{color:var(--green);}
+.rc-form{display:grid; gap:9px;}
+.rc-form input,.rc-form textarea{font-family:Inter,sans-serif; font-size:13.5px; padding:11px 14px;
+  border:1px solid var(--line); border-radius:14px; background:var(--white); color:var(--ink);
+  width:100%;}
+.rc-form textarea{min-height:74px; resize:vertical;}
+.rc-form input:focus,.rc-form textarea:focus{outline:2px solid var(--green); outline-offset:1px;
+  border-color:transparent;}
+.rc-form .two{display:grid; grid-template-columns:1fr 1fr; gap:9px;}
+.rc-form button{font-family:Inter,sans-serif; font-size:12px; font-weight:600; letter-spacing:.1em;
+  text-transform:uppercase; border:0; cursor:pointer; padding:13px 22px; border-radius:999px;
+  background:var(--green); color:var(--white); justify-self:start;}
+.rc-form button:hover{background:var(--green-d);}
+.rc-formnote{font-size:11.5px; color:var(--ink-3); margin:4px 0 0; line-height:1.5;}
+@media(max-width:620px){ .rc-form .two{grid-template-columns:1fr;} }
 
 /* ---- The rebuilt newsletter ------------------------------------------------------
    An email, drawn rather than photographed. The frame is deliberately plain: it is a
@@ -1433,7 +1449,7 @@ if (!document.getElementById('p-cm').hidden) blStart();
 /* ===================================================================================
    RATE CARD
    =================================================================================== */
-const RATES = {"_":"The rate card. Prices here are the RRP Karlie quotes, and they come from the Offer Rules she and Danny keep in Pings (Settings > Offer Rules, mirrored to ~/karlie-outbound/brain/OFFERS.md). check_rates.py reads the live rulebook and fails if a price here no longer appears in it, so the page cannot quietly drift from what she is selling. Formats are read from the newsletter itself, not from a sales deck: the word counts and slot positions below match DTC News issue 250 and the live welcome flow.","currency":"USD","checkout":false,"_checkout":"Card checkout on the page. Off until the W6 Stripe key is allowed to open Checkout Sessions (checkout_session_write) and the Pings webhook is subscribed to checkout.session.completed. While it is off the basket sends the package to Karlie by email instead, which is what she does today.","products":[{"id":"marquee","name":"Marquee","line":"The primary sponsorship in our flagship newsletter, DTC News, with {subs} subscribers. Your logo burned into the hero and the footer, around 150 words, and all our eyes on you.","what":"The top of a DTC News issue. Your logo sits in the masthead, the issue is introduced as being in partnership with you, and your own 150 to 200 words run above everything else in the email. One sponsor an issue, so you are not sharing the slot with anyone.","from":2000,"fromUnit":"a send","spec":[["Words","150 to 200, written by you"],["Links","Up to 5"],["Image","One hero, 650px wide, landscape or square"],["Logo","Masthead and footer, on a dark background"],["Slots","One a send, Tuesdays and Thursdays"]],"gets":["Your logo in the masthead image every reader sees first, and again at the foot of the issue","A partnership line under the intro, so the issue reads as yours before the ad does","Your hero image and your copy, published the way you send it","Up to five links, each tracked, with the clicks reported back to you afterwards"],"why":["It is the only placement above the fold, and the only one a reader cannot scroll past","Sponsors take a median {share} of an issue's total clicks, and {repeat} of them book again","We write none of it, so the pitch is yours rather than our summary of it"],"buys":[{"sku":"marquee-1","label":"One send","qty":1,"price":2000},{"sku":"marquee-3","label":"Three sends","qty":3,"price":4000,"note":"Save $2,000"},{"sku":"marquee-10","label":"Ten sends","qty":10,"price":10000,"note":"Save $10,000"}],"demo":"marquee","group":"newsletter"},{"id":"shoutout","name":"Shout-Out","line":"Our entry-level sponsorship. Quick, easy, and read by most. You share the spot with 3 or 4 other sponsors, who all pull readers in for one another. The classifieds of DTC News.","what":"A short entry in Recommended SaaS & Services, the section of the issue readers open expecting to be sold to. Three or four run in a send, each one a tight paragraph with a link at the end.","from":375,"fromUnit":"each","spec":[["Words","45 to 65, written by you"],["Links","Two"],["Image","None"],["Position","Mid-issue, under Recommended SaaS & Services"],["Slots","Three or four a send"]],"gets":["Your paragraph in the section readers already treat as a recommendation","Two links, tracked, usually the name and the call to action","A spot alongside the other tools in the stack rather than in an ad block"],"why":["The cheapest way to find out whether this audience answers you at all","Short copy, no image and no design work, so it can be live in a week","Four of them across a month costs less than one Marquee and tests four messages"],"buys":[{"sku":"shoutout-1","label":"One","qty":1,"price":375},{"sku":"shoutout-4","label":"Four","qty":4,"price":1500,"note":"Most take four"}],"demo":"shoutout","group":"newsletter"},{"id":"takeover","name":"Total Takeover","line":"A dedicated newsletter written about you by our team, with your input of course. Top to bottom you are the only brand in it, sent to all {subs} subscribers, then again to everyone who did not open it a week later.","what":"Every sponsored slot in one issue is yours: masthead, Marquee, Shout-Out and footer. Then we send the issue a second time to everybody who did not open it the first time.","from":8000,"fromUnit":"","spec":[["Includes","Masthead, Marquee, Shout-Out and footer"],["Resend","To the non-openers, a week later"],["Exclusivity","No other sponsor in the issue"],["Slots","By arrangement, rarely"]],"gets":["Every slot in the issue, with no other brand in the email","A resend to non-openers, which puts the issue in front of about twice as many people","The same reporting as a Marquee, across both sends"],"why":["One issue, undivided attention, no competing logo anywhere in it","The resend reaches the half of the list that did not open the first time","It is the only product where the issue is the campaign"],"buys":[{"sku":"takeover-1","label":"One issue","qty":1,"price":8000}],"demo":"takeover","group":"newsletter"},{"id":"welcome","name":"Welcome Flow","line":"A block in all three welcome emails, read by every new subscriber in their first week, for as long as you hold the spot. Typical weekly intake? About {weekly} new subscribers.","what":"A sponsor block inside the three emails every new DTC News subscriber gets in their first week. It is not tied to one send. For the month you hold it, everybody who joins reads you while they are still opening everything.","from":3000,"fromUnit":"a month","spec":[["Words","Around 100, written by you"],["Links","Up to 4"],["Emails","Three, sent across the first week"],["Position","The Welcome Team block at the foot of each"],["Slots","Three sponsors at a time"]],"gets":["A headline and a paragraph in all three welcome emails, not just the first","Every new subscriber for the whole month, not a single send's worth","Open rates of 51%, 49% and 47% on the three emails, well above a normal issue"],"why":["New readers open at the highest rate they ever will, and you are in all three","It runs while you sleep, with no copy deadline tied to a publish date","It is the one placement that keeps working between your Marquees"],"buys":[{"sku":"welcome-1","label":"A month","qty":1,"price":3000,"repeat":"months"}],"bundle":{"with":"marquee","price":1500,"label":"$1,500 a month when you take it with Marquees"},"demo":"welcome","group":"newsletter"},{"id":"groupbuy","name":"Group Buy","line":"Two messages sent by co-founder Sam Mendelsohn: one straight into every member's DMs, then one in a main channel tagging the room. Around 150 words each, images and video optional. The best way to get in the ear of our members.","what":"Workspace6 sends two direct messages to the private operator community about your offer. It comes from us, not from you, and we pause competing sponsors while it runs. Twelve a year, one partner a month.","from":10000,"fromUnit":"","spec":[["Format","A DM from Sam to every member, then a post in a main channel tagging the room"],["Audience","The private community, founders only"],["Exclusivity","Competing sponsors paused while it runs"],["Slots","One a month, twelve a year"]],"gets":["Two DMs to the full member list, written with you and sent by us","A month where nobody who competes with you is being promoted in there","A member offer worth having, which is what makes the second message land"],"why":["It is a recommendation from the room's owner, which no ad slot can imitate","The room is vetted founders, not a subscriber list, with a median {median} in revenue","Twelve exist in a year, so it is scarce in a way a newsletter slot is not"],"buys":[{"sku":"groupbuy-1","label":"One month","qty":1,"price":10000}],"bundle":{"with":"marquee","price":5000,"label":"$5,000 when you take it with Marquees"},"demo":"groupbuy","group":"community"},{"id":"events","name":"Events","line":"A seat, your name on the invitation and the attendee list afterwards, at a members' dinner or meetup","what":"Workspace6 runs dinners and meetups for members. Supporting puts you at the table with signage and a shout-out. VIP brings two of you, introductions made by us, and the guest list afterwards.","from":3000,"fromUnit":"an event","spec":[["Supporting","One seat, signage, lead list, a Shout-Out"],["VIP","Two seats, introductions, lead list"],["Where","Wherever the next one is scheduled"],["Slots","Two or three sponsors an event"]],"gets":["A seat at a table of operators who are there to talk shop","Signage at the event and your name on the invitation","The attendee list afterwards, which is the part most sponsors are buying"],"why":["An hour across a table beats any number of impressions","The guest list is vetted members, so there are no tyre-kickers in the room","It is the one product where you leave with names and a reason to call them"],"buys":[],"enquire":"Events are sold against whichever dinner is next on the calendar, so this one starts with a conversation. Supporting is $3,000 and VIP is $6,000 to $7,000.","demo":"events","group":"events"}],"groups":[["newsletter","In the newsletter","DTC News, twice a week to {subs} ecommerce operators"],["community","In the community","The private room: {members} founders, every one of them an application we said yes to"],["events","At our events","Dinners and meetups, in the room with the operators"]]};
+const RATES = {"_":"The rate card. Prices here are the RRP Karlie quotes, and they come from the Offer Rules she and Danny keep in Pings (Settings > Offer Rules, mirrored to ~/karlie-outbound/brain/OFFERS.md). check_rates.py reads the live rulebook and fails if a price here no longer appears in it, so the page cannot quietly drift from what she is selling. Formats are read from the newsletter itself, not from a sales deck: the word counts and slot positions below match DTC News issue 250 and the live welcome flow.","currency":"USD","checkout":false,"_checkout":"Card checkout on the page. Off until the W6 Stripe key is allowed to open Checkout Sessions (checkout_session_write) and the Pings webhook is subscribed to checkout.session.completed. While it is off the basket sends the package to Karlie by email instead, which is what she does today.","products":[{"id":"marquee","name":"Marquee","line":"The primary sponsorship in our flagship newsletter, DTC News, with {subs} subscribers. Your logo burned into the hero and the footer, around 150 words, and all our eyes on you.","what":"The top of a DTC News issue. Your logo sits in the masthead, the issue is introduced as being in partnership with you, and your own 150 to 200 words run above everything else in the email. One sponsor an issue, so you are not sharing the slot with anyone.","from":2000,"fromUnit":"a send","spec":[["Words","150 to 200, written by you"],["Links","Up to 5"],["Image","One hero, 650px wide, landscape or square"],["Logo","Masthead and footer, on a dark background"],["Slots","One a send, Tuesdays and Thursdays"]],"gets":["Your logo in the masthead image every reader sees first, and again at the foot of the issue","A partnership line under the intro, so the issue reads as yours before the ad does","Your hero image and your copy, published the way you send it","Up to five links, each tracked, with the clicks reported back to you afterwards"],"why":["It is the only placement above the fold, and the only one a reader cannot scroll past","Sponsors take a median {share} of an issue's total clicks, and {repeat} of them book again","We write none of it, so the pitch is yours rather than our summary of it"],"buys":[{"sku":"marquee-1","label":"One send","qty":1,"price":2000},{"sku":"marquee-3","label":"Three sends","qty":3,"price":4000,"note":"Save $2,000"},{"sku":"marquee-10","label":"Ten sends","qty":10,"price":10000,"note":"Save $10,000"}],"demo":"marquee","group":"newsletter"},{"id":"shoutout","name":"Shout-Out","line":"Our entry-level sponsorship. Quick, easy, and read by most. You share the spot with 3 or 4 other sponsors, who all pull readers in for one another. The classifieds of DTC News.","what":"A short entry in Recommended SaaS & Services, the section of the issue readers open expecting to be sold to. Three or four run in a send, each one a tight paragraph with a link at the end.","from":375,"fromUnit":"each","spec":[["Words","45 to 65, written by you"],["Links","Two"],["Image","None"],["Position","Mid-issue, under Recommended SaaS & Services"],["Slots","Three or four a send"]],"gets":["Your paragraph in the section readers already treat as a recommendation","Two links, tracked, usually the name and the call to action","A spot alongside the other tools in the stack rather than in an ad block"],"why":["The cheapest way to find out whether this audience answers you at all","Short copy, no image and no design work, so it can be live in a week","Four of them across a month costs less than one Marquee and tests four messages"],"buys":[{"sku":"shoutout-1","label":"One","qty":1,"price":375},{"sku":"shoutout-4","label":"Four","qty":4,"price":1500,"note":"Most take four"}],"demo":"shoutout","group":"newsletter"},{"id":"takeover","name":"Total Takeover","line":"A dedicated newsletter written about you by our team, with your input of course. Top to bottom you are the only brand in it, sent to all {subs} subscribers, then again to everyone who did not open it a week later.","what":"A whole issue of DTC News about you, written by our team with your input. No other brand appears anywhere in it. It goes to the full list, and a week later it goes again to everyone who did not open it.","from":8000,"fromUnit":"","spec":[["Includes","A dedicated issue, plus the masthead and the footer"],["Words","Written by our team, with your input and your approval"],["Resend","To the non-openers, a week later"],["Exclusivity","No other sponsor anywhere in the issue"],["Slots","By arrangement, rarely"]],"gets":["An issue written about you by the people this list reads twice a week","Your logo in the masthead and the footer, and nobody else's anywhere in it","A second send a week later to everyone who did not open the first","Every click reported back to you afterwards"],"why":["It reads as an editorial feature rather than an ad, because that is what it is","The resend puts it in front of roughly twice as many people","It is the only product where the issue is the campaign"],"buys":[{"sku":"takeover-1","label":"One issue","qty":1,"price":8000}],"demo":"takeover","group":"newsletter"},{"id":"welcome","name":"Welcome Flow","line":"A block in all three welcome emails, read by every new subscriber in their first week, for as long as you hold the spot. Typical weekly intake? About {weekly} new subscribers.","what":"A sponsor block inside the three emails every new DTC News subscriber gets in their first week. It is not tied to one send. For the month you hold it, everybody who joins reads you while they are still opening everything.","from":3000,"fromUnit":"a month","spec":[["Words","Around 100, written by you"],["Links","Up to 4"],["Emails","Three, sent across the first week"],["Position","The Welcome Team block at the foot of each"],["Slots","Three sponsors at a time"]],"gets":["A headline and a paragraph in all three welcome emails, not just the first","Every new subscriber for the whole month, not a single send's worth","Open rates of 51%, 49% and 47% on the three emails, well above a normal issue"],"why":["New readers open at the highest rate they ever will, and you are in all three","It runs while you sleep, with no copy deadline tied to a publish date","It is the one placement that keeps working between your Marquees"],"buys":[{"sku":"welcome-1","label":"A month","qty":1,"price":3000,"repeat":"months"}],"bundle":{"with":"marquee","price":1500,"label":"$1,500 a month when you take it with Marquees"},"demo":"welcome","group":"newsletter"},{"id":"groupbuy","name":"Group Buy","line":"Two messages sent by co-founder Sam Mendelsohn: one straight into every member's DMs, then one in a main channel tagging the room. Around 150 words each, images and video optional. The best way to get in the ear of our members.","what":"Workspace6 sends two direct messages to the private operator community about your offer. It comes from us, not from you, and we pause competing sponsors while it runs. Twelve a year, one partner a month.","from":10000,"fromUnit":"","spec":[["Format","A DM from Sam to every member, then a post in a main channel tagging the room"],["Audience","The private community, founders only"],["Exclusivity","Competing sponsors paused while it runs"],["Slots","One a month, twelve a year"]],"gets":["Two DMs to the full member list, written with you and sent by us","A month where nobody who competes with you is being promoted in there","A member offer worth having, which is what makes the second message land"],"why":["It is a recommendation from the room's owner, which no ad slot can imitate","The room is vetted founders, not a subscriber list, with a median {median} in revenue","Twelve exist in a year, so it is scarce in a way a newsletter slot is not"],"buys":[{"sku":"groupbuy-1","label":"One month","qty":1,"price":10000}],"bundle":{"with":"marquee","price":5000,"label":"$5,000 when you take it with Marquees"},"demo":"groupbuy","group":"community"},{"id":"events","name":"Events","line":"A seat, your name on the invitation and the attendee list afterwards, at a members' dinner or meetup","what":"Workspace6 runs dinners and meetups for members. Supporting puts you at the table with signage and a shout-out. VIP brings two of you, introductions made by us, and the guest list afterwards.","spec":[["Levels","Supporting or VIP, depending on the night"],["Includes","A seat, signage, your name on the invitation, the lead list"],["Where","Wherever the next one is scheduled"],["Slots","Two or three sponsors an event"]],"gets":["A seat at a table of operators who are there to talk shop","Signage at the event and your name on the invitation","The attendee list afterwards, which is the part most sponsors are buying"],"why":["An hour across a table beats any number of impressions","The guest list is vetted members, so there are no tyre-kickers in the room","It is the one product where you leave with names and a reason to call them"],"buys":[],"enquire":"Events are sold against whichever dinner or meetup is next on the calendar, so this one starts with a conversation rather than a price. Tell us you are interested and Karlie comes back with what is coming up and what it takes to be part of it.","demo":"events","group":"events","priceLabel":"Register your interest"}],"groups":[["newsletter","In the newsletter","DTC News, twice a week to {subs} ecommerce operators"],["community","In the community","The private room: {members} founders, every one of them an application we said yes to"],["events","At our events","Dinners and meetups, in the room with the operators"]]};
 
 /* Live figures, so a price list that sits on the page for a year still quotes this
    week's audience. Same source as the other three tabs. */
@@ -1502,9 +1518,10 @@ document.getElementById('rc-samplenote').innerHTML =
 
 /* ---- The card ------------------------------------------------------------------- */
 function rcPriceLabel(p){
-  return p.buys.length
-    ? `${rcMoney(p.from)}${p.fromUnit ? ' <small>' + p.fromUnit + '</small>' : ''}`
-    : `${rcMoney(p.from)} <small>${p.fromUnit}</small>`;
+  /* Events carries no price: it is sold against whichever night is next, so the column says
+     what to do instead of what it costs. */
+  if (p.priceLabel) return `<span class="pr-txt">${p.priceLabel}</span>`;
+  return `${rcMoney(p.from)}${p.fromUnit ? ' <small>' + p.fromUnit + '</small>' : ''}`;
 }
 document.getElementById('rc-card').innerHTML = RATES.groups.map(g => {
   const mine = RATES.products.filter(p => p.group === g[0]);
@@ -1648,29 +1665,40 @@ const rcDemos = {
     </div>`;
   },
 
-  takeover: () => `
+  takeover: () => {
+    const nq = rcEsc(rcWho()), m = rcKit.marquee;
+    const top = rcImg('masthead')
+      ? `<img class="art" src="${rcImg('masthead')}" alt="">`
+      : `<div class="banner"><div class="k">Workspace6 DTC News</div>
+           <div class="w">Powered by</div>${rcMark()}</div>`;
+    const bottom = rcImg('footer')
+      ? `<img class="art" src="${rcImg('footer')}" alt="">`
+      : `<div class="banner"><div class="k">This issue made possible by</div>${rcMark()}</div>`;
+    return `
     <div class="rc-mail">
-      ${rcImg('masthead')
-        ? `<img class="art" src="${rcImg('masthead')}" alt="">`
-        : `<div class="banner"><div class="k">Workspace6 DTC News</div>
-             <div class="w">Powered by</div>${rcMark()}</div>`}
+      ${top}
       <div class="ebody">
-        <div class="rc-slot" data-tag="Yours" style="margin-bottom:12px">
+        <div class="rc-div">The whole issue, about ${nq}</div>
+        <div class="rc-slot" data-tag="Yours">
           ${rcImg('hero') ? `<img class="heroimg" src="${rcImg('hero')}" alt="">`
-                          : `<div class="rc-hero" style="height:84px">${rcMark()}</div>`}
-          <h4>The Marquee at the top</h4>
-          <div class="rc-count">150 to 200 words</div>
+                          : `<div class="rc-hero">${rcMark()}</div>`}
+          <h4>The second order problem, and what ${nq} does about it</h4>
+          ${(m.paragraphs || []).slice(0, 2).map(x => `<p>${rcEsc(x)}</p>`).join('')}
+          <ul>${(m.bullets || []).slice(0, 3).map(x => `<li>${rcEsc(x)}</li>`).join('')}</ul>
+          ${m.offer ? `<p class="offer">${rcEsc(m.offer)}</p>` : ''}
+          <div class="cta">${rcCta(m.cta)} &rarr;</div>
+          <div class="rc-count">Written by us, with your input. No other brand in the issue</div>
         </div>
-        <div class="ghost bars"><span></span><span></span></div>
-        <div class="rc-div">Recommended SaaS &amp; Services</div>
-        <div class="rc-slot" data-tag="Yours"><p style="margin:0">Your Shout-Out, in the same issue.</p></div>
-        <div class="rc-div">Sent again to everyone who missed it</div>
-        <p class="ghost" style="margin:0">The same issue, a second time, to the non-openers.</p>
       </div>
-      ${rcImg('footer')
-        ? `<img class="art" src="${rcImg('footer')}" alt="">`
-        : `<div class="banner"><div class="k">This issue made possible by</div>${rcMark()}</div>`}
-    </div>`,
+      ${bottom}
+    </div>
+    <div class="rc-mini" style="margin-top:10px">
+      <div class="mh"><span class="sb">Sent again, a week later</span>
+        <span class="op">To the non-openers</span></div>
+      <div style="font-size:11.5px; color:var(--ink-2)">The same issue, a second time, to
+        everybody who did not open it. It is the cheapest way to roughly double who reads it.</div>
+    </div>`;
+  },
 
   events: () => `
     <div class="rc-invite">
@@ -1698,12 +1726,22 @@ function rcProduct(p){
   const buy = p.buys.length
     ? `<div class="rc-opts">${opts}</div>`
       + (p.bundle ? `<div class="rc-bundle">${p.bundle.label}, and the basket works it out for you.</div>` : '')
-    : `<p class="rc-enq">${p.enquire} <a href="mailto:karlie@workspace6.io?subject=${encodeURIComponent('Workspace6 events')}">Ask Karlie what is next</a>.</p>`;
+    : `<p class="rc-enq">${p.enquire}</p>`
+      + `<form class="rc-form" id="rc-interest">`
+      + `<div class="two"><input name="who" placeholder="Your name" autocomplete="name" required>`
+      + `<input name="email" type="email" placeholder="Email" autocomplete="email" required></div>`
+      + `<input name="brand" placeholder="Brand or website" autocomplete="organization">`
+      + `<textarea name="note" placeholder="Anything we should know: a city, a date, what you are hoping to get out of it"></textarea>`
+      + `<button type="submit">Register your interest</button>`
+      + `<p class="rc-formnote">It opens an email to Karlie with this filled in, so you can see `
+      + `exactly what you are sending before it goes.</p></form>`;
   return `
   <section class="rc-prod" id="rc-${p.id}">
     <div class="rc-head">
       <h3>${p.name}</h3>
-      <span class="rc-price"><b>${rcMoney(p.from)}</b>${p.fromUnit ? `<span>${p.fromUnit}</span>` : ''}</span>
+      ${p.priceLabel ? `<span class="rc-price"><b>${p.priceLabel}</b></span>`
+                     : `<span class="rc-price"><b>${rcMoney(p.from)}</b>`
+                       + `${p.fromUnit ? `<span>${p.fromUnit}</span>` : ''}</span>`}
       <span class="ln">${rcFill(p.line)}</span>
     </div>
     <div class="rc-body">
@@ -1880,6 +1918,23 @@ function rcThanks(){
     + `<a href="mailto:karlie@workspace6.io?subject=${encodeURIComponent('My Workspace6 order')}">Email Karlie</a>.`;
   select('tab-rc');
 }
+
+/* Register your interest. There is no server behind this page, so it composes the email
+   rather than pretending to send one: the reader sees exactly what goes to Karlie. */
+document.getElementById('rc-products').addEventListener('submit', e => {
+  const f = e.target.closest('#rc-interest');
+  if (!f) return;
+  e.preventDefault();
+  const v = n => (f.elements[n] && f.elements[n].value || '').trim();
+  const body = [`Hello Karlie,`, ``, `I would like to hear about your next event.`, ``,
+                `Name: ${v('who')}`, `Email: ${v('email')}`,
+                v('brand') ? `Brand: ${v('brand')}` : null, ``,
+                v('note') || null, ``, `Thanks.`]
+    .filter(x => x !== null).join('\n');
+  location.href = `mailto:karlie@workspace6.io?subject=`
+    + `${encodeURIComponent('Workspace6 events: registering interest')}`
+    + `&body=${encodeURIComponent(body)}`;
+});
 
 document.getElementById('rc-products').addEventListener('click', e => {
   const b = e.target.closest('.rc-opt');
