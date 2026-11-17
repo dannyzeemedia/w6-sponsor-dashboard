@@ -784,6 +784,29 @@ button.rc-price:hover{background:var(--green-d);}
   background:var(--green); color:var(--white); justify-self:start;}
 .rc-form button:hover{background:var(--green-d);}
 .rc-formnote{font-size:11.5px; color:var(--ink-3); margin:4px 0 0; line-height:1.5;}
+/* The contents rail. It lives in the empty gutter beside the panel, so it only appears when
+   there is a gutter to put it in; below that width the index card at the top does the job. */
+.rc-rail{display:none;}
+@media(min-width:1380px){
+  .rc-rail{display:block; position:fixed; top:50%; transform:translateY(-50%); z-index:30;
+    left:calc(50% - 530px - 186px); width:170px;}
+  .rc-rail .rl{display:block; font-family:Inter,sans-serif; font-size:9px; font-weight:700;
+    letter-spacing:.16em; text-transform:uppercase; color:var(--ink-3); margin:0 0 9px 11px;}
+  .rc-rail a{display:block; position:relative; font-family:Inter,sans-serif; font-size:12.5px;
+    line-height:1.3; color:var(--ink-3); text-decoration:none; padding:7px 10px 7px 13px;
+    border-left:2px solid var(--line); transition:color .15s, border-color .15s;}
+  .rc-rail a:hover{color:var(--green);}
+  .rc-rail a.on{color:var(--green); font-weight:600; border-left-color:var(--green);}
+  .rc-rail .gp{font-family:Inter,sans-serif; font-size:8.5px; font-weight:700; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--ink-3); opacity:.72; padding:11px 10px 3px 13px;
+    border-left:2px solid var(--line);}
+  .rc-rail .gp:first-of-type{padding-top:0;}
+}
+.rc-hp{position:absolute !important; left:-9999px; width:1px; height:1px; opacity:0;}
+.rc-form button[disabled]{opacity:.6; cursor:default;}
+.rc-sent{font-size:13.5px; line-height:1.6; color:var(--ink); background:var(--mint-soft);
+  border-radius:12px; padding:14px 16px; margin:0;}
+.rc-sent b{color:var(--green);}
 @media(max-width:620px){ .rc-form .two{grid-template-columns:1fr;} }
 
 /* ---- The rebuilt newsletter ------------------------------------------------------
@@ -927,6 +950,8 @@ body.rc-hascart .floatcta{opacity:0; pointer-events:none;}
   .rc-go{width:100%; text-align:center;}
 }
 </style>
+
+<nav class="rc-rail" id="rc-rail" aria-label="The sponsorships on this page"></nav>
 
 <div class="rc-top">
   <div class="l">
@@ -1765,9 +1790,10 @@ function rcProduct(p){
       + `<input name="email" type="email" placeholder="Email" autocomplete="email" required></div>`
       + `<input name="brand" placeholder="Brand or website" autocomplete="organization">`
       + `<textarea name="note" placeholder="Anything we should know: a city, a date, what you are hoping to get out of it"></textarea>`
+      + `<input name="company_name" tabindex="-1" autocomplete="off" aria-hidden="true" class="rc-hp">`
       + `<button type="submit">Register your interest</button>`
-      + `<p class="rc-formnote">It opens an email to Karlie with this filled in, so you can see `
-      + `exactly what you are sending before it goes.</p></form>`;
+      + `<p class="rc-formnote" id="rc-formnote">It goes straight to Karlie and she comes back to you `
+      + `with what is coming up.</p></form>`;
   return `
   <section class="rc-prod" id="rc-${p.id}">
     <div class="rc-head">
@@ -1966,21 +1992,44 @@ function rcThanks(){
   select('tab-rc');
 }
 
-/* Register your interest. There is no server behind this page, so it composes the email
-   rather than pretending to send one: the reader sees exactly what goes to Karlie. */
-document.getElementById('rc-products').addEventListener('submit', e => {
-  const f = e.target.closest('#rc-interest');
-  if (!f) return;
-  e.preventDefault();
-  const v = n => (f.elements[n] && f.elements[n].value || '').trim();
+/* Register your interest. It posts to Pings, which mails Karlie and posts it into the team
+   channel. If that fails we fall back to composing the email, so nobody is ever told it went
+   somewhere it did not. */
+const RCINTEREST = 'https://pings.workspace6.io/api/ratecard/interest';
+function rcMailto(v){
   const body = [`Hello Karlie,`, ``, `I would like to hear about your next event.`, ``,
                 `Name: ${v('who')}`, `Email: ${v('email')}`,
                 v('brand') ? `Brand: ${v('brand')}` : null, ``,
                 v('note') || null, ``, `Thanks.`]
     .filter(x => x !== null).join('\n');
-  location.href = `mailto:karlie@workspace6.io?subject=`
+  return `mailto:karlie@workspace6.io?subject=`
     + `${encodeURIComponent('Workspace6 events: registering interest')}`
     + `&body=${encodeURIComponent(body)}`;
+}
+document.getElementById('rc-products').addEventListener('submit', async e => {
+  const f = e.target.closest('#rc-interest');
+  if (!f) return;
+  e.preventDefault();
+  const v = n => (f.elements[n] && f.elements[n].value || '').trim();
+  const go = f.querySelector('button[type=submit]');
+  const note = document.getElementById('rc-formnote');
+  go.disabled = true; go.textContent = 'Sending';
+  try {
+    const r = await fetch(RCINTEREST, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ who: v('who'), email: v('email'), brand: v('brand'),
+                             note: v('note'), company_name: v('company_name') }),
+    });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok || !j.ok) throw new Error(j.error || 'It did not go through.');
+    f.innerHTML = `<p class="rc-sent"><b>That is with Karlie.</b> She will come back to you `
+      + `with what is coming up and what it takes to be part of it.</p>`;
+  } catch (err) {
+    go.disabled = false; go.textContent = 'Register your interest';
+    if (note) note.textContent = 'Our end did not take it. Opening an email to Karlie instead, '
+      + 'so nothing is lost.';
+    location.href = rcMailto(v);
+  }
 });
 
 document.getElementById('rc-products').addEventListener('click', e => {
@@ -1999,7 +2048,51 @@ document.getElementById('rc-blines').addEventListener('click', e => {
   if (b) rcAdd(b.dataset.sku, +b.dataset.by);
 });
 
+/* ---- The contents rail -------------------------------------------------------------
+   The page is long and every product looks like the one above it from the corner of your
+   eye, so the rail says which one you are standing in and takes you to any other. */
+function rcRail(){
+  const rail = document.getElementById('rc-rail');
+  if (!rail) return;
+  rail.innerHTML = `<span class="rl">On this page</span>`
+    + `<a href="#rc-card" data-rail="rc-card">All prices</a>`
+    + RATES.groups.map(g => {
+        const mine = RATES.products.filter(p => p.group === g[0]);
+        if (!mine.length) return '';
+        return `<span class="gp">${g[1]}</span>`
+             + mine.map(p => `<a href="#rc-${p.id}" data-rail="rc-${p.id}">${p.name}</a>`).join('');
+      }).join('');
+  const links = [...rail.querySelectorAll('a')];
+  rail.addEventListener('click', e => {
+    const a = e.target.closest('a[data-rail]');
+    if (!a) return;
+    e.preventDefault();
+    const t = document.getElementById(a.dataset.rail);
+    if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+  /* Which one you are in: the last section whose top has passed a line a third of the way
+     down the window. Measured on a frame, not on every scroll event. */
+  let ticking = false;
+  function mark(){
+    ticking = false;
+    const panel = document.getElementById('p-rc');
+    if (!panel || panel.hidden) return;
+    const line = window.innerHeight * 0.34;
+    let on = links[0];
+    for (const a of links) {
+      const t = document.getElementById(a.dataset.rail);
+      if (t && t.getBoundingClientRect().top <= line) on = a;
+    }
+    links.forEach(a => a.classList.toggle('on', a === on));
+  }
+  addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(mark); } },
+                   { passive: true });
+  addEventListener('resize', mark);
+  mark();
+}
+
 rcDrawProducts();
+rcRail();
 rcBasket();
 rcThanks();
 </script>
