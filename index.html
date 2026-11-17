@@ -669,7 +669,8 @@ a.bl-chip:hover{border-color:var(--green); color:var(--green);}
      of last month's issue ages, it cannot be read on a phone, and it cannot have the
      reader's own logo in it. Everything below is the real anatomy of a DTC News issue,
      laid out from issue 250 and the live welcome flow, redrawn in the dashboard's own
-     type. Put a domain in the box at the top and every example redraws as theirs.
+     type. Every example carries the same made-up sponsor, Northquay, built properly:
+     real artwork, real word counts, nothing a prospect has to imagine.
      ================================================================================== -->
 <style>
 .rc-top{display:flex; gap:26px; align-items:flex-end; justify-content:space-between;
@@ -678,28 +679,16 @@ a.bl-chip:hover{border-color:var(--green); color:var(--green);}
 .rc-top h2{font-size:28px; color:var(--green); margin:0;}
 .rc-top p{color:var(--ink-2); font-size:14.5px; margin:9px 0 0;}
 
-/* Put your brand in it. One domain, and every mock-up below wears your logo. The lookup
-   happens in the reader's own browser against Logo.dev's public CDN; nothing is sent to
-   us and nothing is stored anywhere but their own machine. */
-.rc-brandbox{background:var(--mint-soft); border:1px solid var(--line); border-radius:18px;
-  padding:16px 18px; min-width:320px; flex:0 1 380px;}
-.rc-brandbox .lbl{color:var(--green); display:block; margin-bottom:9px;}
-.rc-brandform{display:flex; gap:8px;}
-.rc-brandform input{flex:1 1 auto; min-width:0; font-family:Inter,sans-serif; font-size:14px;
-  padding:11px 14px; border:1px solid var(--line); border-radius:999px; background:var(--white);
-  color:var(--ink);}
-.rc-brandform input:focus{outline:2px solid var(--green); outline-offset:1px; border-color:transparent;}
-.rc-brandform button{font-family:Inter,sans-serif; font-size:11px; font-weight:600;
-  letter-spacing:.1em; text-transform:uppercase; border:0; cursor:pointer; padding:11px 18px;
-  border-radius:999px; background:var(--green); color:var(--white);}
-.rc-brandform button:hover{background:var(--green-d);}
-.rc-brandnote{font-size:11.5px; color:var(--ink-3); margin:9px 0 0; line-height:1.5;}
-.rc-brandnote button{background:none; border:0; padding:0; cursor:pointer; color:var(--green);
-  font:inherit; text-decoration:underline;}
-.rc-brandnote.err{color:#8a3a2e;}
-.rc-tick,.rc-now{display:inline-block; margin-right:10px; font-size:11.5px;}
-.rc-tick{color:var(--green);} .rc-tick::before{content:"\2713 "; font-weight:700;}
-.rc-now{color:var(--ink-3);} .rc-now::after{content:" \2026";}
+/* Who the examples are for. Northquay is invented, which the page says out loud: a
+   rate card that shows a real sponsor's ad as a sales prop is borrowing somebody
+   else's name, and one that shows a grey box is asking the reader to imagine. */
+.rc-sample{background:var(--mint-soft); border:1px solid var(--line); border-radius:18px;
+  padding:15px 18px; min-width:300px; flex:0 1 370px;}
+.rc-sample .lbl{color:var(--green); display:block; margin-bottom:6px;}
+.rc-sample p{font-size:12.5px; color:var(--ink-2); margin:0; line-height:1.55;}
+.rc-sample .nq{display:inline-flex; align-items:center; gap:7px; color:var(--green);
+  font-weight:600;}
+.rc-sample img{height:17px; display:block;}
 
 /* The card itself: the whole price list on one screen, before any of the detail. */
 .rc-card{margin:22px 0 0; border:1px solid var(--line); border-radius:var(--radius);
@@ -890,7 +879,7 @@ body.rc-hascart .floatcta{opacity:0; pointer-events:none;}
   .rc-row.head{display:none;}
 }
 @media(max-width:620px){
-  .rc-brandbox{flex:1 1 100%; min-width:0;}
+  .rc-sample{flex:1 1 100%; min-width:0;}
   .rc-top h2{font-size:24px;}
   .rc-basket{padding:16px; border-radius:16px;}
   .rc-btot .tv{font-size:26px;}
@@ -903,14 +892,9 @@ body.rc-hascart .floatcta{opacity:0; pointer-events:none;}
     <h2>Everything we sell, and what it costs.</h2>
     <p id="rc-intro"></p>
   </div>
-  <div class="rc-brandbox">
-    <span class="lbl">See it with your brand in it</span>
-    <form class="rc-brandform" id="rc-brandform">
-      <input id="rc-domain" type="text" inputmode="url" autocomplete="off"
-             placeholder="yourbrand.com" aria-label="Your website">
-      <button type="submit">Show me</button>
-    </form>
-    <p class="rc-brandnote" id="rc-brandnote"></p>
+  <div class="rc-sample">
+    <span class="lbl">The examples use a sample sponsor</span>
+    <p id="rc-samplenote"></p>
   </div>
 </div>
 
@@ -1432,7 +1416,6 @@ if (!document.getElementById('p-cm').hidden) blStart();
    RATE CARD
    =================================================================================== */
 const RATES = {"_":"The rate card. Prices here are the RRP Karlie quotes, and they come from the Offer Rules she and Danny keep in Pings (Settings > Offer Rules, mirrored to ~/karlie-outbound/brain/OFFERS.md). check_rates.py reads the live rulebook and fails if a price here no longer appears in it, so the page cannot quietly drift from what she is selling. Formats are read from the newsletter itself, not from a sales deck: the word counts and slot positions below match DTC News issue 250 and the live welcome flow.","currency":"USD","checkout":false,"_checkout":"Card checkout on the page. Off until the W6 Stripe key is allowed to open Checkout Sessions (checkout_session_write) and the Pings webhook is subscribed to checkout.session.completed. While it is off the basket sends the package to Karlie by email instead, which is what she does today.","products":[{"id":"marquee","name":"Marquee","line":"The issue goes out under your name","what":"The top of a DTC News issue. Your logo sits in the masthead, the issue is introduced as being in partnership with you, and your own 150 to 200 words run above everything else in the email. One sponsor an issue, so you are not sharing the slot with anyone.","from":2000,"fromUnit":"a send","spec":[["Words","150 to 200, written by you"],["Links","Up to 5"],["Image","One hero, 650px wide, landscape or square"],["Logo","Masthead and footer, on a dark background"],["Slots","One a send, Tuesdays and Thursdays"]],"gets":["Your logo in the masthead image every reader sees first, and again at the foot of the issue","A partnership line under the intro, so the issue reads as yours before the ad does","Your hero image and your copy, published the way you send it","Up to five links, each tracked, with the clicks reported back to you afterwards"],"why":["It is the only placement above the fold, and the only one a reader cannot scroll past","Sponsors take a median {share} of an issue's total clicks, and {repeat} of them book again","We write none of it, so the pitch is yours rather than our summary of it"],"buys":[{"sku":"marquee-1","label":"One send","qty":1,"price":2000},{"sku":"marquee-3","label":"Three sends","qty":3,"price":4000,"note":"Save $2,000"},{"sku":"marquee-10","label":"Ten sends","qty":10,"price":10000,"note":"Save $10,000"}],"demo":"marquee"},{"id":"shoutout","name":"Shout-Out","line":"A paragraph in the part people read for recommendations","what":"A short entry in Recommended SaaS & Services, the section of the issue readers open expecting to be sold to. Three or four run in a send, each one a tight paragraph with a link at the end.","from":375,"fromUnit":"each","spec":[["Words","45 to 65, written by you"],["Links","Two"],["Image","None"],["Position","Mid-issue, under Recommended SaaS & Services"],["Slots","Three or four a send"]],"gets":["Your paragraph in the section readers already treat as a recommendation","Two links, tracked, usually the name and the call to action","A spot alongside the other tools in the stack rather than in an ad block"],"why":["The cheapest way to find out whether this audience answers you at all","Short copy, no image and no design work, so it can be live in a week","Four of them across a month costs less than one Marquee and tests four messages"],"buys":[{"sku":"shoutout-1","label":"One","qty":1,"price":375},{"sku":"shoutout-4","label":"Four","qty":4,"price":1500,"note":"Most take four"}],"demo":"shoutout"},{"id":"welcome","name":"Welcome Flow","line":"Every new subscriber, for as long as you hold the slot","what":"A sponsor block inside the three emails every new DTC News subscriber gets in their first week. It is not tied to one send. For the month you hold it, everybody who joins reads you while they are still opening everything.","from":3000,"fromUnit":"a month","spec":[["Words","Around 100, written by you"],["Links","Up to 4"],["Emails","Three, sent across the first week"],["Position","The Welcome Team block at the foot of each"],["Slots","Three sponsors at a time"]],"gets":["A headline and a paragraph in all three welcome emails, not just the first","Every new subscriber for the whole month, not a single send's worth","Open rates of 51%, 49% and 47% on the three emails, well above a normal issue"],"why":["New readers open at the highest rate they ever will, and you are in all three","It runs while you sleep, with no copy deadline tied to a publish date","It is the one placement that keeps working between your Marquees"],"buys":[{"sku":"welcome-1","label":"A month","qty":1,"price":3000,"repeat":"months"}],"bundle":{"with":"marquee","price":1500,"label":"$1,500 a month when you take it with Marquees"},"demo":"welcome"},{"id":"groupbuy","name":"Group Buy","line":"Two messages from us, straight into the community","what":"Workspace6 sends two direct messages to the private operator community about your offer. It comes from us, not from you, and we pause competing sponsors while it runs. Twelve a year, one partner a month.","from":10000,"fromUnit":"","spec":[["Format","Two direct Slack messages from Workspace6"],["Audience","The private community, founders only"],["Exclusivity","Competing sponsors paused while it runs"],["Slots","One a month, twelve a year"]],"gets":["Two DMs to the full member list, written with you and sent by us","A month where nobody who competes with you is being promoted in there","A member offer worth having, which is what makes the second message land"],"why":["It is a recommendation from the room's owner, which no ad slot can imitate","The room is vetted founders, not a subscriber list, with a median {median} in revenue","Twelve exist in a year, so it is scarce in a way a newsletter slot is not"],"buys":[{"sku":"groupbuy-1","label":"One month","qty":1,"price":10000}],"bundle":{"with":"marquee","price":5000,"label":"$5,000 when you take it with Marquees"},"demo":"groupbuy"},{"id":"takeover","name":"Total Takeover","line":"The whole send, then sent again to everyone who missed it","what":"Every sponsored slot in one issue is yours: masthead, Marquee, Shout-Out and footer. Then we send the issue a second time to everybody who did not open it the first time.","from":8000,"fromUnit":"","spec":[["Includes","Masthead, Marquee, Shout-Out and footer"],["Resend","To non-openers, a second shot at the same list"],["Exclusivity","No other sponsor in the issue"],["Slots","By arrangement, rarely"]],"gets":["Every slot in the issue, with no other brand in the email","A resend to non-openers, which puts the issue in front of about twice as many people","The same reporting as a Marquee, across both sends"],"why":["One issue, undivided attention, no competing logo anywhere in it","The resend reaches the half of the list that did not open the first time","It is the only product where the issue is the campaign"],"buys":[{"sku":"takeover-1","label":"One issue","qty":1,"price":8000}],"demo":"takeover"},{"id":"events","name":"Events","line":"Dinners and meetups, in the room with the operators","what":"Workspace6 runs dinners and meetups for members. Supporting puts you at the table with signage and a shout-out. VIP brings two of you, introductions made by us, and the guest list afterwards.","from":3000,"fromUnit":"an event","spec":[["Supporting","One seat, signage, lead list, a Shout-Out"],["VIP","Two seats, introductions, lead list"],["Where","Wherever the next one is scheduled"],["Slots","Two or three sponsors an event"]],"gets":["A seat at a table of operators who are there to talk shop","Signage at the event and your name on the invitation","The attendee list afterwards, which is the part most sponsors are buying"],"why":["An hour across a table beats any number of impressions","The guest list is vetted members, so there are no tyre-kickers in the room","It is the one product where you leave with names and a reason to call them"],"buys":[],"enquire":"Events are sold against whichever dinner is next on the calendar, so this one starts with a conversation. Supporting is $3,000 and VIP is $6,000 to $7,000.","demo":"events"}]};
-const LOGODEV = 'pk_URC-i19QSdey97nwOq18_Q';
 
 /* Live figures, so a price list that sits on the page for a year still quotes this
    week's audience. Same source as the other three tabs. */
@@ -1449,49 +1432,31 @@ document.getElementById('rc-intro').textContent =
   + `apply to get in. Prices below are the list price. Every example is the real shape of a `
   + `DTC News issue, so you can see exactly what you are buying before you buy it.`;
 
-/* ---- Whose logo goes in the examples ---------------------------------------------
-   Typed into the box, looked up in the reader's own browser against Logo.dev's public
-   CDN, and remembered only on their machine. We never see it, and nothing about the
-   visitor is recorded here. */
-let rcBrand = null;
-try { rcBrand = JSON.parse(localStorage.getItem('w6rc') || 'null'); } catch (e) {}
+/* ---- The sample sponsor -----------------------------------------------------------
+   Every example below is the same invented company, Northquay, built beforehand the way a
+   real sponsor's would be: its logo drawn, the masthead and footer artwork made with it, a
+   hero image, and a Marquee, Shout-Out and Welcome block written to the word counts we
+   sell. Invented rather than a real sponsor, because showing somebody else's ad as a sales
+   prop borrows their name; built rather than greyed out, because a prospect should not have
+   to imagine the thing they are buying. */
+const RCKITS = 'https://sponsor.workspace6.io/kits/';
+const rcKit = {"domain":"northquay.io","name":"Northquay","colour":"#16325c","images":{"masthead":"masthead.webp","footer":"footer.webp","hero":"hero.webp","ink":"logo-ink.webp"},"link":"https://northquay.io","marquee":{"headline":"Half your repeat revenue comes from 12% of first orders. Which 12%?","paragraphs":["You know your repeat rate. You do not know who is in it. You find out ninety days late, when the second order does not arrive.","Northquay reads your order history and scores every first-time buyer on day two: coming back, or already gone. It sits on Shopify and Klaviyo, so the answer turns into a flow instead of a slide nobody acts on."],"bullets":["A repeat-purchase score on every customer by day two","Cohorts split by first product, discount and acquisition channel","The real reorder window for each SKU, measured rather than assumed","Scores pushed into Klaviyo as segments, hourly"],"offer":"Workspace6 members get 90 days free and a teardown of their last twelve months of cohorts.","cta":"See who is coming back"},"shoutout":{"text":"Your repeat rate is a fact about last year. Northquay turns it into a list of names: which first-time buyers will reorder, scored two days after they order, synced into Klaviyo. One skincare brand found 14% of first orders drove 61% of year-two revenue, then built a flow around exactly those people.","cta":"Worth an hour"},"welcome":{"headline":"Most brands find out a customer is gone ninety days after they left.","paragraphs":["Northquay is retention analytics for DTC brands. It reads your order history and scores every first-time buyer on how likely they are to come back, two days after their first order.","That score lands in Klaviyo as a segment, so the people worth chasing get chased and the rest stop costing you discount codes."],"cta":"Try Northquay free for 90 days. Workspace6 members get a cohort teardown of their last twelve months."},"hero":{"stat":"61%","stat_line":"of year-two revenue came from 14% of first orders","proof":"Northquay scores every new customer on day two"},"built":null};
+const rcWho = () => rcKit.name;
+const rcImg = f => (rcKit.images && rcKit.images[f])
+  ? `${RCKITS}${rcKit.domain}/${rcKit.images[f]}` : '';
 
-function rcDomain(raw){
-  let d = (raw || '').trim().toLowerCase();
-  d = d.replace(/^[a-z]+:\/\//, '').replace(/^www\./, '').split(/[\/?#]/)[0].trim();
-  return /^[a-z0-9][a-z0-9.-]*\.[a-z]{2,}$/.test(d) ? d : '';
-}
-function rcName(d){
-  const root = d.split('.')[0].replace(/[-_]+/g, ' ');
-  return root.replace(/\b[a-z]/g, c => c.toUpperCase());
-}
-function rcLogoURL(d){
-  return `https://img.logo.dev/${d}?token=${LOGODEV}&size=120&format=png&retina=true&fallback=404`;
-}
-/* The mark, wherever a logo goes. Always on a white chip: a sponsor's logo may be dark
-   ink on transparent, and the real newsletter asks them for a dark-background version we
-   obviously do not have here. If Logo.dev has never seen the domain the name is set in
-   the brand serif instead, which is what the issue does for brands without a usable file. */
-/* Until somebody types their own domain in, the examples are not mock-ups at all: they are
-   the sponsors who actually ran, with their own copy and their own logo. LoyaltyLion took
-   the Marquee in issue 250, Levanta the Shout-Out, Omnisend the welcome block. A rate card
-   showing invented ads is a rate card nobody believes. */
-const RCREAL = {
-  marquee:  { domain: 'loyaltylion.com', name: 'LoyaltyLion', logo: true, where: 'Issue 250' },
-  shoutout: { domain: 'levanta.io',      name: 'Levanta',     logo: true, where: 'Issue 250' },
-  welcome:  { domain: 'omnisend.com',    name: 'Omnisend',    logo: true, where: 'Live now' },
-};
-const rcSub = demo => rcBrand || RCREAL[demo] || null;
-
-function rcMark(demo, extra){
-  const b = rcSub(demo), cls = 'rc-mark' + (extra ? ' ' + extra : '');
-  if (!b) return `<span class="${cls}"><span class="tx">Your brand</span></span>`;
-  if (!b.logo) return `<span class="${cls}"><span class="tx">${rcEsc(b.name)}</span></span>`;
-  return `<span class="${cls}"><img src="${rcLogoURL(b.domain)}" alt="${rcEsc(b.name)}"`
-       + ` onerror="this.parentNode.innerHTML='<span class=&quot;tx&quot;>${rcEsc(b.name)}</span>'"></span>`;
-}
 function rcEsc(s){ return (s || '').replace(/[&<>"']/g, c =>
   ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+/* The mark, wherever a logo goes, always on a white chip: in the issue a sponsor's logo
+   sits on the dark plate in white, and on anything pale it sits in ink. */
+function rcMark(extra){
+  const cls = 'rc-mark' + (extra ? ' ' + extra : '');
+  const src = rcImg('ink');
+  return src
+    ? `<span class="${cls}"><img src="${src}" alt="${rcEsc(rcKit.name)}"></span>`
+    : `<span class="${cls}"><span class="tx">${rcEsc(rcKit.name)}</span></span>`;
+}
 /* The written call to action often carries its own arrow and its own address, because that
    is how it goes into the issue. On the page the arrow is ours and the address is a link,
    so both are taken out of the words first. */
@@ -1500,103 +1465,12 @@ function rcCta(t){
                         .replace(/\s*(?:→|->|&rarr;)\s*/g, ' ')
                         .replace(/\s{2,}/g, ' ').trim().replace(/[.,:;]$/, ''));
 }
-const rcWho = demo => { const b = rcSub(demo); return b ? b.name : 'your brand'; };
 
-/* ---- The real mock-up -------------------------------------------------------------
-   For the companies Workspace6 is actually talking to, the whole thing is already built:
-   their logo lifted off their own site and painted white for the plate, the masthead and
-   footer artwork made with it, a Marquee written from their own site, and a hero image
-   with a photograph of their product in it. That takes about a minute of real work, so it
-   is done beforehand and waiting here rather than while they watch a spinner.
-
-   Anybody else gets the lighter version: their logo in the right places and the format
-   around it. The difference is said out loud rather than papered over. */
-const RCKITS = 'https://sponsor.workspace6.io/kits/';
-let rcKit = null;
-
-const RCSTEPS = [['Reading', 480], ['Your logo', 760], ['Your Marquee', 820],
-                 ['Your hero image', 900], ['Ready', 420]];
-
-function rcSteps(domain, done){
-  /* A reveal, not a progress bar: each line names a thing that was really made, and the
-     last one hands over to the page. It is paced so the four can be read. */
-  const note = document.getElementById('rc-brandnote');
-  note.className = 'rc-brandnote';
-  let i = 0;
-  const tick = () => {
-    if (i >= RCSTEPS.length) { done(); return; }
-    const ticks = RCSTEPS.slice(0, i).map(s => `<span class="rc-tick">${s[0]}</span>`).join('');
-    const now = RCSTEPS[i][0] === 'Reading' ? `Reading ${rcEsc(domain)}` : RCSTEPS[i][0];
-    note.innerHTML = ticks + `<span class="rc-now">${now}</span>`;
-    const wait = RCSTEPS[i][1];
-    i++;
-    setTimeout(tick, wait);
-  };
-  tick();
-}
-
-function rcSetBrand(d){
-  if (!d) {
-    rcBrand = null; rcKit = null;
-    try { localStorage.removeItem('w6rc'); } catch (e) {}
-    rcAfterBrand(); return;
-  }
-  rcBrand = { domain: d, name: rcName(d), logo: true };
-  rcKit = null;
-  const ready = { kit: false, logo: false };
-  const settle = () => { if (ready.kit && ready.logo) rcSteps(d, rcAfterBrand); };
-
-  /* Ask for the mark before drawing with it, so a domain Logo.dev has never indexed
-     falls back to the name rather than painting a broken image into six mock-ups. */
-  const probe = new Image();
-  probe.onload  = () => { rcBrand.logo = true;  ready.logo = true; settle(); };
-  probe.onerror = () => { rcBrand.logo = false; ready.logo = true; settle(); };
-  probe.src = rcLogoURL(d);
-
-  fetch(`${RCKITS}${encodeURIComponent(d)}/kit.json`, { cache: 'force-cache' })
-    .then(r => r.ok ? r.json() : null)
-    .then(k => {
-      if (k && k.marquee) {
-        rcKit = k;
-        rcBrand.name = k.name || rcBrand.name;
-        rcBrand.colour = k.colour || '';
-      }
-    })
-    .catch(() => {})
-    .then(() => { ready.kit = true; settle(); });
-}
-const rcImg = f => rcKit && rcKit.images && rcKit.images[f]
-  ? `${RCKITS}${rcKit.domain}/${rcKit.images[f]}` : '';
-function rcAfterBrand(){
-  try { localStorage.setItem('w6rc', JSON.stringify(rcBrand)); } catch (e) {}
-  rcDrawProducts();
-  rcBasket();
-  const note = document.getElementById('rc-brandnote');
-  note.className = 'rc-brandnote';
-  if (!rcBrand) { note.innerHTML = 'Nothing leaves your browser. We look the logo up and draw it here.'; return; }
-  note.innerHTML = (rcKit
-      ? `This is a real one. We wrote it from your site and made the artwork. `
-      : rcBrand.logo
-        ? `Your logo, in the right places. The words are still ours. `
-        : `We could not find a logo for ${rcEsc(rcBrand.domain)}, so the examples use the name. `)
-    + `<button type="button" id="rc-clearbrand">Back to the real ones</button>`;
-  document.getElementById('rc-clearbrand').addEventListener('click', () => {
-    document.getElementById('rc-domain').value = '';
-    rcSetBrand('');
-  });
-}
-document.getElementById('rc-brandform').addEventListener('submit', e => {
-  e.preventDefault();
-  const raw = document.getElementById('rc-domain').value;
-  const d = rcDomain(raw);
-  const note = document.getElementById('rc-brandnote');
-  if (!d) {
-    note.className = 'rc-brandnote err';
-    note.textContent = 'That does not look like a web address. Try yourbrand.com.';
-    return;
-  }
-  rcSetBrand(d);
-});
+document.getElementById('rc-samplenote').innerHTML =
+  `<span class="nq">${rcImg('ink') ? `<img src="${rcImg('ink')}" alt="">`
+                                   : rcEsc(rcKit.name)}</span> does not exist. `
+  + `We made it up, then built its sponsorship the way we build a real one, so every `
+  + `placement below is the finished article rather than a placeholder.`;
 
 /* ---- The card ------------------------------------------------------------------- */
 function rcPriceLabel(p){
@@ -1626,29 +1500,18 @@ const rcDemos = {
     const top = rcImg('masthead')
       ? `<img class="art" src="${rcImg('masthead')}" alt="Workspace6 DTC News, powered by ${rcEsc(rcWho('marquee'))}">`
       : `<div class="banner"><div class="k">Workspace6 DTC News</div>
-           <div class="w">Powered by</div>${rcMark('marquee')}</div>`;
+           <div class="w">Powered by</div>${rcMark()}</div>`;
     const bottom = rcImg('footer')
       ? `<img class="art" src="${rcImg('footer')}" alt="This issue made possible by ${rcEsc(rcWho('marquee'))}">`
-      : `<div class="banner"><div class="k">This issue made possible by</div>${rcMark('marquee')}</div>`;
+      : `<div class="banner"><div class="k">This issue made possible by</div>${rcMark()}</div>`;
     const hero = rcImg('hero')
       ? `<img class="heroimg" src="${rcImg('hero')}" alt="">`
-      : `<div class="rc-hero">${rcMark('marquee')}</div>`;
-    const body = m
-      ? `<h4>${rcEsc(m.headline)}</h4>`
-        + (m.paragraphs || []).slice(0, 2).map(x => `<p>${rcEsc(x)}</p>`).join('')
-        + `<ul>${(m.bullets || []).slice(0, 4).map(x => `<li>${rcEsc(x)}</li>`).join('')}</ul>`
-        + (m.offer ? `<p class="offer">${rcEsc(m.offer)}</p>` : '')
-        + `<div class="cta">${rcCta(m.cta)} &rarr;</div>`
-      : `<h4>${rcBrand ? rcEsc(rcBrand.name) + ' takes the top of the issue.'
-                       : 'Got a plan to bring shoppers back after BFCM?'}</h4>`
-        + `<p>${rcBrand
-              ? 'Your 150 to 200 words sit here, exactly as you send them. The headline, the '
-                + 'proof, the offer and the link are all yours. We publish, we do not rewrite.'
-              : '54% of consumers are more likely to join a loyalty program during BFCM than at '
-                + 'any other time of year. Brands like Evereve and ILIA Beauty are already '
-                + 'planning how to make the most of it.'}</p>`
-        + `<ul><li>Up to five links, all tracked</li><li>Bullets, bold, whatever you send</li></ul>`
-        + `<div class="cta">${rcBrand ? 'Your call to action' : 'Register for the webinar'} &rarr;</div>`;
+      : `<div class="rc-hero">${rcMark()}</div>`;
+    const body = `<h4>${rcEsc(m.headline)}</h4>`
+      + (m.paragraphs || []).slice(0, 2).map(x => `<p>${rcEsc(x)}</p>`).join('')
+      + `<ul>${(m.bullets || []).slice(0, 4).map(x => `<li>${rcEsc(x)}</li>`).join('')}</ul>`
+      + (m.offer ? `<p class="offer">${rcEsc(m.offer)}</p>` : '')
+      + `<div class="cta">${rcCta(m.cta)} &rarr;</div>`;
     return `
     <div class="rc-mail">
       ${top}
@@ -1668,16 +1531,8 @@ const rcDemos = {
   },
 
   shoutout: () => {
-    const so = rcKit && rcKit.shoutout;
-    const mine = so
-      ? `${rcEsc(so.text)} <b>${rcCta(so.cta)} &rarr;</b>`
-      : `<b>${rcEsc(rcWho('shoutout'))}</b> ${rcBrand
-            ? 'gets 45 to 65 words to say the one thing worth saying, and two links. '
-              + 'Short enough to read standing up, long enough to be an argument.'
-            : 'shows you which affiliate sales are actually new to brand. REVO built a '
-              + 'program that drove $1M+ in affiliate sales, 96% of them new customers '
-              + 'against an industry average of 28%.'} `
-          + `<b>${rcBrand ? 'Your link' : 'Book a demo'} &rarr;</b>`;
+    const so = rcKit.shoutout;
+    const mine = `${rcEsc(so.text)} <b>${rcCta(so.cta)} &rarr;</b>`;
     return `
     <div class="rc-mail">
       <div class="ebody">
@@ -1698,7 +1553,7 @@ const rcDemos = {
   },
 
   welcome: () => {
-    const w = rcKit && rcKit.welcome;
+    const w = rcKit.welcome;
     const mails = [['You&rsquo;re in. (The mailing list, anyway.)', '51% open'],
                    ['We got tired of the internet.', '49% open'],
                    ['$1. Thirty days. No hoodie required.', '47% open']];
@@ -1708,17 +1563,9 @@ const rcDemos = {
         <div class="ghost bars"><span></span><span></span></div>
         ${i === 0 ? `<div class="rc-div" style="margin:11px 0 9px">Our Welcome Team</div>
         <div class="rc-slot" data-tag="Yours">
-          <h4>${w ? rcEsc(w.headline)
-                  : rcBrand ? rcEsc(rcBrand.name) + ' meets them on day one.'
-                            : 'Most brands do not switch ESPs because migration feels like a nightmare.'}</h4>
-          ${w ? (w.paragraphs || []).slice(0, 2).map(x => `<p>${rcEsc(x)}</p>`).join('')
-              : `<p>${rcBrand
-                    ? 'Around 100 words and up to four links, in all three emails, for as long as you '
-                      + 'hold the slot. Every subscriber who joins this month reads it.'
-                    : 'Omnisend handles your entire migration free of charge and in five days, so you '
-                      + 'can move without the usual disruption or downtime.'}</p>`}
-          <div class="cta">${w ? rcCta(w.cta) + ' &rarr;'
-                               : rcBrand ? 'Your call to action &rarr;' : 'Make the move &rarr;'}</div>
+          <h4>${rcEsc(w.headline)}</h4>
+          ${(w.paragraphs || []).slice(0, 2).map(x => `<p>${rcEsc(x)}</p>`).join('')}
+          <div class="cta">${rcCta(w.cta)} &rarr;</div>
           <div class="rc-count">~100 words, in all three</div>
         </div>` : `<div class="rc-div" style="margin:11px 0 9px">Your block runs here too</div>
         <div class="ghost bars" style="opacity:.75"><span></span><span></span></div>`}
@@ -1729,11 +1576,8 @@ const rcDemos = {
     <div class="rc-dm">
       <div class="msg"><div class="av">W6</div><div>
         <div class="who">Workspace6 <span class="when">Monday, 9:02am</span></div>
-        <div class="txt">${rcBrand
-          ? 'We have put something together with <b>' + rcEsc(rcBrand.name) + '</b> for the room. '
-            + 'Your offer, in our words, to every member at once. Worth a look.'
-          : 'We have put something together for the room with one of our partners. Their offer, '
-            + 'in our words, to every member at once.'}</div></div></div>
+        <div class="txt">We have put something together with <b>${rcEsc(rcWho())}</b> for the
+          room. Their offer, in our words, to every member at once. Worth a look.</div></div></div>
       <div class="msg"><div class="av">W6</div><div>
         <div class="who">Workspace6 <span class="when">The following Monday</span></div>
         <div class="txt">Second message, a week later, for the people who meant to look and did
@@ -1749,11 +1593,11 @@ const rcDemos = {
       ${rcImg('masthead')
         ? `<img class="art" src="${rcImg('masthead')}" alt="">`
         : `<div class="banner"><div class="k">Workspace6 DTC News</div>
-             <div class="w">Powered by</div>${rcMark('takeover')}</div>`}
+             <div class="w">Powered by</div>${rcMark()}</div>`}
       <div class="ebody">
         <div class="rc-slot" data-tag="Yours" style="margin-bottom:12px">
           ${rcImg('hero') ? `<img class="heroimg" src="${rcImg('hero')}" alt="">`
-                          : `<div class="rc-hero" style="height:84px">${rcMark('takeover')}</div>`}
+                          : `<div class="rc-hero" style="height:84px">${rcMark()}</div>`}
           <h4>The Marquee at the top</h4>
           <div class="rc-count">150 to 200 words</div>
         </div>
@@ -1765,7 +1609,7 @@ const rcDemos = {
       </div>
       ${rcImg('footer')
         ? `<img class="art" src="${rcImg('footer')}" alt="">`
-        : `<div class="banner"><div class="k">This issue made possible by</div>${rcMark('takeover')}</div>`}
+        : `<div class="banner"><div class="k">This issue made possible by</div>${rcMark()}</div>`}
     </div>`,
 
   events: () => `
@@ -1775,7 +1619,7 @@ const rcDemos = {
       <div class="ev">Dinner with the operators</div>
       <div class="de">A table of members, somewhere worth eating, one evening</div>
       <div class="pw">In partnership with</div>
-      <div style="margin-top:8px">${rcMark('events', 'soft')}</div>
+      <div style="margin-top:8px">${rcMark('soft')}</div>
     </div>
     <div class="rc-mini" style="margin-top:10px">
       <div class="mh"><span class="sb">You leave with</span><span class="op">The guest list</span></div>
@@ -1816,9 +1660,7 @@ function rcProduct(p){
       <div class="rc-demo">
         <div class="cap"><span>${ {groupbuy: 'In the community', events: 'On the night',
             welcome: 'In the welcome emails'}[p.id] || 'In the issue' }</span>
-          <span>${rcBrand ? rcEsc(rcBrand.name)
-              : (RCREAL[p.demo] ? rcEsc(RCREAL[p.demo].name) + ' &middot; ' + RCREAL[p.demo].where
-                                : 'Example')}</span></div>
+          <span>${rcEsc(rcKit.name)} &middot; sample</span></div>
         ${rcDemos[p.demo]()}
       </div>
     </div>
@@ -1921,12 +1763,11 @@ const RCTILL = 'https://pings.workspace6.io/api/ratecard/checkout';
 function rcMailto(lines, total){
   const body = [`Hello Karlie,`, ``, `I would like to book this package:`, ``]
     .concat(lines.map(l => `  ${l.qty} x ${l.name} (${l.label}) - ${rcMoney(l.unit * l.qty)}`))
-    .concat([``, `Total: ${rcMoney(total)}`,
-             rcBrand ? `` : null, rcBrand ? `Our website: ${rcBrand.domain}` : null, ``,
-             `Please send me the dates you have open.`].filter(x => x !== null))
+    .concat([``, `Total: ${rcMoney(total)}`, ``,
+             `Please send me the dates you have open.`])
     .join('\n');
-  return `mailto:karlie@workspace6.io?subject=${encodeURIComponent('Workspace6 package'
-      + (rcBrand ? ' for ' + rcBrand.name : ''))}&body=${encodeURIComponent(body)}`;
+  return `mailto:karlie@workspace6.io?subject=${encodeURIComponent('Workspace6 package')}`
+       + `&body=${encodeURIComponent(body)}`;
 }
 
 document.getElementById('rc-go').addEventListener('click', async () => {
@@ -1989,9 +1830,9 @@ document.getElementById('rc-blines').addEventListener('click', e => {
   if (b) rcAdd(b.dataset.sku, +b.dataset.by);
 });
 
-rcAfterBrand();
+rcDrawProducts();
+rcBasket();
 rcThanks();
-if (rcBrand) document.getElementById('rc-domain').value = rcBrand.domain;
 </script>
 
 
