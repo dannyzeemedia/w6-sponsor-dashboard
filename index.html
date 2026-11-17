@@ -676,8 +676,9 @@ a.bl-chip:hover{border-color:var(--green); color:var(--green);}
 .rc-top{display:flex; gap:26px; align-items:flex-end; justify-content:space-between;
   flex-wrap:wrap; margin:24px 0 0;}
 .rc-top .l{max-width:52ch;}
-.rc-top h2{font-size:28px; color:var(--green); margin:0;}
-.rc-top p{color:var(--ink-2); font-size:14.5px; margin:9px 0 0;}
+.rc-top h2{font-size:28px; line-height:1.14; color:var(--green); margin:0;}
+.rc-top p{color:var(--ink-2); font-size:14.5px; margin:11px 0 0;}
+.rc-top p a{color:var(--green); text-decoration:underline; text-underline-offset:2px;}
 
 /* Who the examples are for. Northquay is invented, which the page says out loud: a
    rate card that shows a real sponsor's ad as a sales prop is borrowing somebody
@@ -1433,11 +1434,11 @@ const rcFig = {
 function rcFill(s){ return s.replace(/\{[a-z]+\}/g, m => rcFig[m] !== undefined ? rcFig[m] : m); }
 const rcMoney = n => '$' + n.toLocaleString('en-US');
 
-document.getElementById('rc-intro').textContent =
-  `One sponsor an issue, three or four Shout-Outs beside them, and a community that has to `
-  + `apply to get in. The prices below are list. Most sponsors take more than one thing, and `
-  + `that is where the price moves: add them to your basket and it works the bundle out as `
-  + `you go, or talk to us and we will build the package around your dates.`;
+document.getElementById('rc-intro').innerHTML =
+  `The prices below are list. Most sponsors take more than one thing, and that is where the `
+  + `price moves: add them to your basket and it works the bundle out as you go, or `
+  + `<a href="https://sponsors.workspace6.io" target="_blank" rel="noopener">talk to us</a> `
+  + `and we will build the package around your dates.`;
 
 /* ---- The sample sponsor -----------------------------------------------------------
    Every example below is the same invented company, Northquay, built beforehand the way a
@@ -1447,10 +1448,12 @@ document.getElementById('rc-intro').textContent =
    prop borrows their name; built rather than greyed out, because a prospect should not have
    to imagine the thing they are buying. */
 const RCKITS = 'https://sponsor.workspace6.io/kits/';
-const rcKit = {"domain":"northquay.io","name":"Northquay","colour":"#16325c","images":{"masthead":"masthead.webp","footer":"footer.webp","hero":"hero.webp","ink":"logo-ink.webp"},"link":"https://northquay.io","marquee":{"headline":"Half your repeat revenue comes from 12% of first orders. Which 12%?","paragraphs":["You know your repeat rate. You do not know who is in it. You find out ninety days late, when the second order does not arrive.","Northquay reads your order history and scores every first-time buyer on day two: coming back, or already gone. It sits on Shopify and Klaviyo, so the answer turns into a flow instead of a slide nobody acts on."],"bullets":["A repeat-purchase score on every customer by day two","Cohorts split by first product, discount and acquisition channel","The real reorder window for each SKU, measured rather than assumed","Scores pushed into Klaviyo as segments, hourly"],"offer":"Workspace6 members get 90 days free and a teardown of their last twelve months of cohorts.","cta":"See who is coming back"},"shoutout":{"text":"Your repeat rate is a fact about last year. Northquay turns it into a list of names: which first-time buyers will reorder, scored two days after they order, synced into Klaviyo. One skincare brand found 14% of first orders drove 61% of year-two revenue, then built a flow around exactly those people.","cta":"Worth an hour"},"welcome":{"headline":"Most brands find out a customer is gone ninety days after they left.","paragraphs":["Northquay is retention analytics for DTC brands. It reads your order history and scores every first-time buyer on how likely they are to come back, two days after their first order.","That score lands in Klaviyo as a segment, so the people worth chasing get chased and the rest stop costing you discount codes."],"cta":"Try Northquay free for 90 days. Workspace6 members get a cohort teardown of their last twelve months."},"hero":{"stat":"61%","stat_line":"of year-two revenue came from 14% of first orders","proof":"Northquay scores every new customer on day two"},"built":null};
+const rcKit = {"domain":"northquay.io","name":"Northquay","colour":"#16325c","images":{"masthead":"masthead.webp","footer":"footer.webp","hero":"hero.webp","ink":"logo-ink.webp"},"link":"https://northquay.io","marquee":{"headline":"Half your repeat revenue comes from 12% of first orders. Which 12%?","paragraphs":["You know your repeat rate. You do not know who is in it. You find out ninety days late, when the second order does not arrive.","Northquay reads your order history and scores every first-time buyer on day two: coming back, or already gone. It sits on Shopify and Klaviyo, so the answer turns into a flow instead of a slide nobody acts on."],"bullets":["A repeat-purchase score on every customer by day two","Cohorts split by first product, discount and acquisition channel","The real reorder window for each SKU, measured rather than assumed","Scores pushed into Klaviyo as segments, hourly"],"offer":"Workspace6 members get 90 days free and a teardown of their last twelve months of cohorts.","cta":"See who is coming back"},"shoutout":{"text":"Your repeat rate is a fact about last year. Northquay turns it into a list of names: which first-time buyers will reorder, scored two days after they order, synced into Klaviyo. One skincare brand found 14% of first orders drove 61% of year-two revenue, then built a flow around exactly those people.","cta":"Worth an hour"},"welcome":{"headline":"Most brands find out a customer is gone ninety days after they left.","paragraphs":["Northquay is retention analytics for DTC brands. It reads your order history and scores every first-time buyer on how likely they are to come back, two days after their first order.","That score lands in Klaviyo as a segment, so the people worth chasing get chased and the rest stop costing you discount codes."],"cta":"Try Northquay free for 90 days. Workspace6 members get a cohort teardown of their last twelve months."},"hero":{"stat":"61%","stat_line":"of year-two revenue came from 14% of first orders","proof":"Northquay scores every new customer on day two"},"built":null,"v":"1794913883"};
 const rcWho = () => rcKit.name;
+/* The version stamp matters: the filenames never change, so a browser that cached an
+   earlier build would go on showing yesterday's artwork forever. */
 const rcImg = f => (rcKit.images && rcKit.images[f])
-  ? `${RCKITS}${rcKit.domain}/${rcKit.images[f]}` : '';
+  ? `${RCKITS}${rcKit.domain}/${rcKit.images[f]}${rcKit.v ? '?v=' + rcKit.v : ''}` : '';
 
 function rcEsc(s){ return (s || '').replace(/[&<>"']/g, c =>
   ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
