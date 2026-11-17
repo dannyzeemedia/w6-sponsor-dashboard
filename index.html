@@ -1722,7 +1722,7 @@ const rcDemos = {
 /* ---- Drawing a product ------------------------------------------------------------ */
 function rcProduct(p){
   const opts = p.buys.map(b =>
-      `<button class="rc-opt" data-sku="${b.sku}"><span class="o-l">${b.label}</span>`
+      `<button class="rc-opt" data-sku="${b.sku}" aria-pressed="false"><span class="o-l">${b.label}</span>`
     + `<span class="o-p">${rcMoney(b.price)}</span>`
     + `<span class="o-n">${b.note || (b.qty > 1 ? rcMoney(Math.round(b.price / b.qty)) + ' a send' : '&nbsp;')}</span>`
     + `</button>`).join('');
@@ -1799,6 +1799,13 @@ function rcLines(){
     name: rcSKU[s].product.name, label: rcSKU[s].label,
   }));
 }
+/* An option is a choice, not a counter: clicking it again takes it out rather than buying
+   a second one. Quantities are changed in the basket, where the number is visible. */
+function rcToggle(sku){
+  if (rcCart[sku]) delete rcCart[sku]; else rcCart[sku] = 1;
+  try { sessionStorage.setItem('w6cart', JSON.stringify(rcCart)); } catch (e) {}
+  rcBasket(); rcPaint();
+}
 function rcAdd(sku, by){
   rcCart[sku] = Math.max(0, Math.min(99, (rcCart[sku] || 0) + by));
   if (!rcCart[sku]) delete rcCart[sku];
@@ -1806,8 +1813,11 @@ function rcAdd(sku, by){
   rcBasket(); rcPaint();
 }
 function rcPaint(){
-  document.querySelectorAll('.rc-opt').forEach(b =>
-    b.classList.toggle('on', !!rcCart[b.dataset.sku]));
+  document.querySelectorAll('.rc-opt').forEach(b => {
+    const on = !!rcCart[b.dataset.sku];
+    b.classList.toggle('on', on);
+    b.setAttribute('aria-pressed', on ? 'true' : 'false');
+  });
 }
 function rcBasket(){
   if (rcDone) return;                 /* back from Stripe: the thank you stays put */
@@ -1941,7 +1951,7 @@ document.getElementById('rc-products').addEventListener('submit', e => {
 
 document.getElementById('rc-products').addEventListener('click', e => {
   const b = e.target.closest('.rc-opt');
-  if (b) { rcAdd(b.dataset.sku, 1); return; }
+  if (b) { rcToggle(b.dataset.sku); return; }
   /* The Events pill is an instruction, not a price, so it has to do what it says. */
   if (e.target.closest('.rc-price-go')) {
     const f = document.getElementById('rc-interest');
