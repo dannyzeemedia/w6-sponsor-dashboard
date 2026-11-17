@@ -684,11 +684,12 @@ a.bl-chip:hover{border-color:var(--green); color:var(--green);}
    else's name, and one that shows a grey box is asking the reader to imagine. */
 .rc-sample{background:var(--mint-soft); border:1px solid var(--line); border-radius:18px;
   padding:15px 18px; min-width:300px; flex:0 1 370px;}
-.rc-sample .lbl{color:var(--green); display:block; margin-bottom:6px;}
+.rc-sample .lbl{color:var(--green); display:block; margin-bottom:10px;}
 .rc-sample p{font-size:12.5px; color:var(--ink-2); margin:0; line-height:1.55;}
-.rc-sample .nq{display:inline-flex; align-items:center; gap:7px; color:var(--green);
-  font-weight:600;}
-.rc-sample img{height:17px; display:block;}
+.rc-sample .nq{display:block; margin:0 0 9px;}
+.rc-sample .nq img{height:19px; display:block;}
+.rc-sample .nq b{font-family:Gambetta,Georgia,serif; font-weight:400; font-size:18px;
+  color:var(--green);}
 
 /* The card itself: the whole price list on one screen, before any of the detail. */
 .rc-card{margin:22px 0 0; border:1px solid var(--line); border-radius:var(--radius);
@@ -889,7 +890,7 @@ body.rc-hascart .floatcta{opacity:0; pointer-events:none;}
 
 <div class="rc-top">
   <div class="l">
-    <h2>Everything we sell, and what it costs.</h2>
+    <h2>Every sponsorship we offer, and what it costs.</h2>
     <p id="rc-intro"></p>
   </div>
   <div class="rc-sample">
@@ -1429,8 +1430,9 @@ const rcMoney = n => '$' + n.toLocaleString('en-US');
 
 document.getElementById('rc-intro').textContent =
   `One sponsor an issue, three or four Shout-Outs beside them, and a community that has to `
-  + `apply to get in. Prices below are the list price. Every example is the real shape of a `
-  + `DTC News issue, so you can see exactly what you are buying before you buy it.`;
+  + `apply to get in. The prices below are list. Most sponsors take more than one thing, and `
+  + `that is where the price moves: add them to your basket and it works the bundle out as `
+  + `you go, or talk to us and we will build the package around your dates.`;
 
 /* ---- The sample sponsor -----------------------------------------------------------
    Every example below is the same invented company, Northquay, built beforehand the way a
@@ -1468,10 +1470,11 @@ function rcCta(t){
 
 document.getElementById('rc-samplenote').innerHTML =
   `<span class="nq">${rcImg('ink')
-        ? `<img src="${rcImg('ink')}" alt="${rcEsc(rcKit.name)}">` : rcEsc(rcKit.name)}</span>`
-  + ` does not exist. `
-  + `We made it up, then built its sponsorship the way we build a real one, so every `
-  + `placement below is the finished article rather than a placeholder.`;
+        ? `<img src="${rcImg('ink')}" alt="${rcEsc(rcKit.name)}">`
+        : `<b>${rcEsc(rcKit.name)}</b>`}</span>`
+  + `${rcEsc(rcKit.name)} does not exist. We invented it, then built its sponsorship the `
+  + `way we build a real one, so every placement below is finished work rather than a `
+  + `placeholder.`;
 
 /* ---- The card ------------------------------------------------------------------- */
 function rcPriceLabel(p){
