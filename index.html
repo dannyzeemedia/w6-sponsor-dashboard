@@ -1467,8 +1467,9 @@ function rcCta(t){
 }
 
 document.getElementById('rc-samplenote').innerHTML =
-  `<span class="nq">${rcImg('ink') ? `<img src="${rcImg('ink')}" alt="">`
-                                   : rcEsc(rcKit.name)}</span> does not exist. `
+  `<span class="nq">${rcImg('ink')
+        ? `<img src="${rcImg('ink')}" alt="${rcEsc(rcKit.name)}">` : rcEsc(rcKit.name)}</span>`
+  + ` does not exist. `
   + `We made it up, then built its sponsorship the way we build a real one, so every `
   + `placement below is the finished article rather than a placeholder.`;
 
