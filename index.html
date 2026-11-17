@@ -697,6 +697,9 @@ a.bl-chip:hover{border-color:var(--green); color:var(--green);}
 .rc-brandnote button{background:none; border:0; padding:0; cursor:pointer; color:var(--green);
   font:inherit; text-decoration:underline;}
 .rc-brandnote.err{color:#8a3a2e;}
+.rc-tick,.rc-now{display:inline-block; margin-right:10px; font-size:11.5px;}
+.rc-tick{color:var(--green);} .rc-tick::before{content:"\2713 "; font-weight:700;}
+.rc-now{color:var(--ink-3);} .rc-now::after{content:" \2026";}
 
 /* The card itself: the whole price list on one screen, before any of the detail. */
 .rc-card{margin:22px 0 0; border:1px solid var(--line); border-radius:var(--radius);
@@ -785,6 +788,9 @@ a.bl-chip:hover{border-color:var(--green); color:var(--green);}
 .rc-mark.soft{background:var(--mint-soft);}
 .rc-mark .tx{font-family:Gambetta,Georgia,serif; font-size:15px; color:#16483d; line-height:1;}
 .rc-mail .ebody{padding:16px 18px 18px;}
+.rc-mail .art{display:block; width:100%; height:auto;}
+.rc-mail .heroimg{display:block; width:100%; height:auto; border-radius:9px; margin-bottom:12px;}
+.rc-slot .offer{color:var(--green); font-weight:500;}
 .rc-mail .ghost{color:var(--ink-3); font-size:11.5px; line-height:1.55;}
 .rc-mail .ghost.bars span{display:block; height:7px; border-radius:4px; background:var(--line-2);
   margin-bottom:6px;}
@@ -1486,18 +1492,81 @@ function rcMark(demo, extra){
 }
 function rcEsc(s){ return (s || '').replace(/[&<>"']/g, c =>
   ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+/* The written call to action often carries its own arrow and its own address, because that
+   is how it goes into the issue. On the page the arrow is ours and the address is a link,
+   so both are taken out of the words first. */
+function rcCta(t){
+  return rcEsc((t || '').replace(/https?:\/\/\S+/g, '')
+                        .replace(/\s*(?:→|->|&rarr;)\s*/g, ' ')
+                        .replace(/\s{2,}/g, ' ').trim().replace(/[.,:;]$/, ''));
+}
 const rcWho = demo => { const b = rcSub(demo); return b ? b.name : 'your brand'; };
 
+/* ---- The real mock-up -------------------------------------------------------------
+   For the companies Workspace6 is actually talking to, the whole thing is already built:
+   their logo lifted off their own site and painted white for the plate, the masthead and
+   footer artwork made with it, a Marquee written from their own site, and a hero image
+   with a photograph of their product in it. That takes about a minute of real work, so it
+   is done beforehand and waiting here rather than while they watch a spinner.
+
+   Anybody else gets the lighter version: their logo in the right places and the format
+   around it. The difference is said out loud rather than papered over. */
+const RCKITS = 'https://sponsor.workspace6.io/kits/';
+let rcKit = null;
+
+const RCSTEPS = [['Reading', 480], ['Your logo', 760], ['Your Marquee', 820],
+                 ['Your hero image', 900], ['Ready', 420]];
+
+function rcSteps(domain, done){
+  /* A reveal, not a progress bar: each line names a thing that was really made, and the
+     last one hands over to the page. It is paced so the four can be read. */
+  const note = document.getElementById('rc-brandnote');
+  note.className = 'rc-brandnote';
+  let i = 0;
+  const tick = () => {
+    if (i >= RCSTEPS.length) { done(); return; }
+    const ticks = RCSTEPS.slice(0, i).map(s => `<span class="rc-tick">${s[0]}</span>`).join('');
+    const now = RCSTEPS[i][0] === 'Reading' ? `Reading ${rcEsc(domain)}` : RCSTEPS[i][0];
+    note.innerHTML = ticks + `<span class="rc-now">${now}</span>`;
+    const wait = RCSTEPS[i][1];
+    i++;
+    setTimeout(tick, wait);
+  };
+  tick();
+}
+
 function rcSetBrand(d){
-  if (!d) { rcBrand = null; try { localStorage.removeItem('w6rc'); } catch (e) {} rcAfterBrand(); return; }
+  if (!d) {
+    rcBrand = null; rcKit = null;
+    try { localStorage.removeItem('w6rc'); } catch (e) {}
+    rcAfterBrand(); return;
+  }
   rcBrand = { domain: d, name: rcName(d), logo: true };
+  rcKit = null;
+  const ready = { kit: false, logo: false };
+  const settle = () => { if (ready.kit && ready.logo) rcSteps(d, rcAfterBrand); };
+
   /* Ask for the mark before drawing with it, so a domain Logo.dev has never indexed
      falls back to the name rather than painting a broken image into six mock-ups. */
   const probe = new Image();
-  probe.onload  = () => { rcBrand.logo = true;  rcAfterBrand(); };
-  probe.onerror = () => { rcBrand.logo = false; rcAfterBrand(); };
+  probe.onload  = () => { rcBrand.logo = true;  ready.logo = true; settle(); };
+  probe.onerror = () => { rcBrand.logo = false; ready.logo = true; settle(); };
   probe.src = rcLogoURL(d);
+
+  fetch(`${RCKITS}${encodeURIComponent(d)}/kit.json`, { cache: 'force-cache' })
+    .then(r => r.ok ? r.json() : null)
+    .then(k => {
+      if (k && k.marquee) {
+        rcKit = k;
+        rcBrand.name = k.name || rcBrand.name;
+        rcBrand.colour = k.colour || '';
+      }
+    })
+    .catch(() => {})
+    .then(() => { ready.kit = true; settle(); });
 }
+const rcImg = f => rcKit && rcKit.images && rcKit.images[f]
+  ? `${RCKITS}${rcKit.domain}/${rcKit.images[f]}` : '';
 function rcAfterBrand(){
   try { localStorage.setItem('w6rc', JSON.stringify(rcBrand)); } catch (e) {}
   rcDrawProducts();
@@ -1505,9 +1574,11 @@ function rcAfterBrand(){
   const note = document.getElementById('rc-brandnote');
   note.className = 'rc-brandnote';
   if (!rcBrand) { note.innerHTML = 'Nothing leaves your browser. We look the logo up and draw it here.'; return; }
-  note.innerHTML = (rcBrand.logo
-      ? `Every example below is now ${rcEsc(rcBrand.name)}. `
-      : `We could not find a logo for ${rcEsc(rcBrand.domain)}, so the examples use the name. `)
+  note.innerHTML = (rcKit
+      ? `This is a real one. We wrote it from your site and made the artwork. `
+      : rcBrand.logo
+        ? `Your logo, in the right places. The words are still ours. `
+        : `We could not find a logo for ${rcEsc(rcBrand.domain)}, so the examples use the name. `)
     + `<button type="button" id="rc-clearbrand">Back to the real ones</button>`;
   document.getElementById('rc-clearbrand').addEventListener('click', () => {
     document.getElementById('rc-domain').value = '';
@@ -1548,48 +1619,72 @@ document.getElementById('rc-card').addEventListener('click', e => {
    Each of these is a diagram of one slot inside the real thing. Greyed bars are the
    parts of the issue that are not for sale; the outlined block is what you get. */
 const rcDemos = {
-  marquee: () => `
+  marquee: () => {
+    /* With a kit: their own artwork and their own Marquee, as it would run. Without one:
+       the format, drawn, with their logo in the three places it appears. */
+    const k = rcKit, m = k && k.marquee;
+    const top = rcImg('masthead')
+      ? `<img class="art" src="${rcImg('masthead')}" alt="Workspace6 DTC News, powered by ${rcEsc(rcWho('marquee'))}">`
+      : `<div class="banner"><div class="k">Workspace6 DTC News</div>
+           <div class="w">Powered by</div>${rcMark('marquee')}</div>`;
+    const bottom = rcImg('footer')
+      ? `<img class="art" src="${rcImg('footer')}" alt="This issue made possible by ${rcEsc(rcWho('marquee'))}">`
+      : `<div class="banner"><div class="k">This issue made possible by</div>${rcMark('marquee')}</div>`;
+    const hero = rcImg('hero')
+      ? `<img class="heroimg" src="${rcImg('hero')}" alt="">`
+      : `<div class="rc-hero">${rcMark('marquee')}</div>`;
+    const body = m
+      ? `<h4>${rcEsc(m.headline)}</h4>`
+        + (m.paragraphs || []).slice(0, 2).map(x => `<p>${rcEsc(x)}</p>`).join('')
+        + `<ul>${(m.bullets || []).slice(0, 4).map(x => `<li>${rcEsc(x)}</li>`).join('')}</ul>`
+        + (m.offer ? `<p class="offer">${rcEsc(m.offer)}</p>` : '')
+        + `<div class="cta">${rcCta(m.cta)} &rarr;</div>`
+      : `<h4>${rcBrand ? rcEsc(rcBrand.name) + ' takes the top of the issue.'
+                       : 'Got a plan to bring shoppers back after BFCM?'}</h4>`
+        + `<p>${rcBrand
+              ? 'Your 150 to 200 words sit here, exactly as you send them. The headline, the '
+                + 'proof, the offer and the link are all yours. We publish, we do not rewrite.'
+              : '54% of consumers are more likely to join a loyalty program during BFCM than at '
+                + 'any other time of year. Brands like Evereve and ILIA Beauty are already '
+                + 'planning how to make the most of it.'}</p>`
+        + `<ul><li>Up to five links, all tracked</li><li>Bullets, bold, whatever you send</li></ul>`
+        + `<div class="cta">${rcBrand ? 'Your call to action' : 'Register for the webinar'} &rarr;</div>`;
+    return `
     <div class="rc-mail">
-      <div class="banner"><div class="k">Workspace6 DTC News</div>
-        <div class="w">Powered by</div>${rcMark('marquee')}</div>
+      ${top}
       <div class="ebody">
         <div class="ghost bars"><span></span><span></span><span></span></div>
         <div class="rc-div">In partnership with ${rcEsc(rcWho('marquee'))}</div>
         <div class="rc-slot" data-tag="Yours">
-          <div class="rc-hero">${rcMark('marquee')}</div>
-          <h4>${rcBrand ? rcEsc(rcBrand.name) + ' takes the top of the issue.'
-                        : 'Got a plan to bring shoppers back after BFCM?'}</h4>
-          <p>${rcBrand
-                ? 'Your 150 to 200 words sit here, exactly as you send them. The headline, the '
-                  + 'proof, the offer and the link are all yours. We publish, we do not rewrite.'
-                : '54% of consumers are more likely to join a loyalty program during BFCM than at '
-                  + 'any other time of year. Brands like Evereve and ILIA Beauty are already '
-                  + 'planning how to make the most of it.'}</p>
-          <ul><li>Up to five links, all tracked</li><li>Bullets, bold, whatever you send</li></ul>
-          <div class="cta">${rcBrand ? 'Your call to action &rarr;' : 'Register for the webinar &rarr;'}</div>
+          ${hero}
+          ${body}
           <div class="rc-count">150 to 200 words</div>
         </div>
         <div class="rc-div">The issue carries on</div>
         <div class="ghost bars"><span></span><span></span><span></span></div>
       </div>
-      <div class="banner"><div class="k">This issue made possible by</div>${rcMark('marquee')}</div>
-    </div>`,
+      ${bottom}
+    </div>`;
+  },
 
-  shoutout: () => `
+  shoutout: () => {
+    const so = rcKit && rcKit.shoutout;
+    const mine = so
+      ? `${rcEsc(so.text)} <b>${rcCta(so.cta)} &rarr;</b>`
+      : `<b>${rcEsc(rcWho('shoutout'))}</b> ${rcBrand
+            ? 'gets 45 to 65 words to say the one thing worth saying, and two links. '
+              + 'Short enough to read standing up, long enough to be an argument.'
+            : 'shows you which affiliate sales are actually new to brand. REVO built a '
+              + 'program that drove $1M+ in affiliate sales, 96% of them new customers '
+              + 'against an industry average of 28%.'} `
+          + `<b>${rcBrand ? 'Your link' : 'Book a demo'} &rarr;</b>`;
+    return `
     <div class="rc-mail">
       <div class="ebody">
         <div class="ghost bars"><span></span><span></span></div>
         <div class="rc-div">Recommended SaaS &amp; Services</div>
         <div class="rc-slot" data-tag="Yours">
-          <ul class="rc-sos" style="margin:0">
-            <li class="mine"><b>${rcEsc(rcWho('shoutout'))}</b> ${rcBrand
-                ? 'gets 45 to 65 words to say the one thing worth saying, and two links. '
-                  + 'Short enough to read standing up, long enough to be an argument.'
-                : 'shows you which affiliate sales are actually new to brand. REVO built a '
-                  + 'program that drove $1M+ in affiliate sales, 96% of them new customers '
-                  + 'against an industry average of 28%.'}
-              <b>${rcBrand ? 'Your link &rarr;' : 'Book a demo &rarr;'}</b></li>
-          </ul>
+          <ul class="rc-sos" style="margin:0"><li class="mine">${mine}</li></ul>
           <div class="rc-count">45 to 65 words, two links</div>
         </div>
         <ul class="rc-sos" style="margin-top:12px">
@@ -1599,9 +1694,11 @@ const rcDemos = {
         <div class="rc-div">The issue carries on</div>
         <div class="ghost bars"><span></span><span></span></div>
       </div>
-    </div>`,
+    </div>`;
+  },
 
   welcome: () => {
+    const w = rcKit && rcKit.welcome;
     const mails = [['You&rsquo;re in. (The mailing list, anyway.)', '51% open'],
                    ['We got tired of the internet.', '49% open'],
                    ['$1. Thirty days. No hoodie required.', '47% open']];
@@ -1611,14 +1708,17 @@ const rcDemos = {
         <div class="ghost bars"><span></span><span></span></div>
         ${i === 0 ? `<div class="rc-div" style="margin:11px 0 9px">Our Welcome Team</div>
         <div class="rc-slot" data-tag="Yours">
-          <h4>${rcBrand ? rcEsc(rcBrand.name) + ' meets them on day one.'
-                        : 'Most brands do not switch ESPs because migration feels like a nightmare.'}</h4>
-          <p>${rcBrand
-                ? 'Around 100 words and up to four links, in all three emails, for as long as you '
-                  + 'hold the slot. Every subscriber who joins this month reads it.'
-                : 'Omnisend handles your entire migration free of charge and in five days, so you '
-                  + 'can move without the usual disruption or downtime.'}</p>
-          <div class="cta">${rcBrand ? 'Your call to action &rarr;' : 'Make the move &rarr;'}</div>
+          <h4>${w ? rcEsc(w.headline)
+                  : rcBrand ? rcEsc(rcBrand.name) + ' meets them on day one.'
+                            : 'Most brands do not switch ESPs because migration feels like a nightmare.'}</h4>
+          ${w ? (w.paragraphs || []).slice(0, 2).map(x => `<p>${rcEsc(x)}</p>`).join('')
+              : `<p>${rcBrand
+                    ? 'Around 100 words and up to four links, in all three emails, for as long as you '
+                      + 'hold the slot. Every subscriber who joins this month reads it.'
+                    : 'Omnisend handles your entire migration free of charge and in five days, so you '
+                      + 'can move without the usual disruption or downtime.'}</p>`}
+          <div class="cta">${w ? rcCta(w.cta) + ' &rarr;'
+                               : rcBrand ? 'Your call to action &rarr;' : 'Make the move &rarr;'}</div>
           <div class="rc-count">~100 words, in all three</div>
         </div>` : `<div class="rc-div" style="margin:11px 0 9px">Your block runs here too</div>
         <div class="ghost bars" style="opacity:.75"><span></span><span></span></div>`}
@@ -1646,11 +1746,14 @@ const rcDemos = {
 
   takeover: () => `
     <div class="rc-mail">
-      <div class="banner"><div class="k">Workspace6 DTC News</div>
-        <div class="w">Powered by</div>${rcMark('takeover')}</div>
+      ${rcImg('masthead')
+        ? `<img class="art" src="${rcImg('masthead')}" alt="">`
+        : `<div class="banner"><div class="k">Workspace6 DTC News</div>
+             <div class="w">Powered by</div>${rcMark('takeover')}</div>`}
       <div class="ebody">
         <div class="rc-slot" data-tag="Yours" style="margin-bottom:12px">
-          <div class="rc-hero" style="height:84px">${rcMark('takeover')}</div>
+          ${rcImg('hero') ? `<img class="heroimg" src="${rcImg('hero')}" alt="">`
+                          : `<div class="rc-hero" style="height:84px">${rcMark('takeover')}</div>`}
           <h4>The Marquee at the top</h4>
           <div class="rc-count">150 to 200 words</div>
         </div>
@@ -1660,7 +1763,9 @@ const rcDemos = {
         <div class="rc-div">Sent again to everyone who missed it</div>
         <p class="ghost" style="margin:0">The same issue, a second time, to the non-openers.</p>
       </div>
-      <div class="banner"><div class="k">This issue made possible by</div>${rcMark('takeover')}</div>
+      ${rcImg('footer')
+        ? `<img class="art" src="${rcImg('footer')}" alt="">`
+        : `<div class="banner"><div class="k">This issue made possible by</div>${rcMark('takeover')}</div>`}
     </div>`,
 
   events: () => `
