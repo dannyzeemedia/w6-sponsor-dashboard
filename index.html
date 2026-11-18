@@ -692,6 +692,21 @@ a.bl-chip:hover{border-color:var(--green); color:var(--green);}
 .rc-sample .nq b{font-family:Gambetta,Georgia,serif; font-weight:400; font-size:18px;
   color:var(--green);}
 
+/* The proof. Everything above is a claim about what we sell; the archive is the only
+   place a prospect can see it actually running, in issue after issue, with every brand
+   that has already paid for the slot. It is loud on purpose. */
+.rc-past{display:flex; align-items:center; justify-content:space-between; gap:24px;
+  flex-wrap:wrap; margin:26px 0 0; padding:26px 30px; border-radius:var(--radius);
+  background:var(--green); color:var(--white);}
+.rc-past h3{font-family:Gambetta,Georgia,serif; font-weight:400; font-size:25px;
+  line-height:1.16; margin:0; color:var(--white);}
+.rc-past p{margin:9px 0 0; font-size:14px; line-height:1.5; color:var(--mint); max-width:56ch;}
+.rc-past .l{min-width:260px; flex:1 1 420px;}
+.rc-past a{display:inline-flex; align-items:center; gap:9px; white-space:nowrap;
+  font-family:Inter,sans-serif; font-size:14px; font-weight:600; text-decoration:none;
+  background:var(--mint); color:var(--green); border-radius:999px; padding:14px 24px;}
+.rc-past a:hover{background:var(--white);}
+
 /* The card itself: the whole price list on one screen, before any of the detail. */
 .rc-card{margin:22px 0 0; border:1px solid var(--line); border-radius:var(--radius);
   overflow:hidden; background:var(--white);}
@@ -944,6 +959,9 @@ body.rc-hascart .floatcta{opacity:0; pointer-events:none;}
 }
 @media(max-width:620px){
   .rc-sample{flex:1 1 100%; min-width:0;}
+  .rc-past{padding:22px; gap:18px;}
+  .rc-past h3{font-size:21px;}
+  .rc-past a{width:100%; justify-content:center;}
   .rc-top h2{font-size:24px;}
   .rc-basket{padding:16px; border-radius:16px;}
   .rc-btot .tv{font-size:26px;}
@@ -965,6 +983,15 @@ body.rc-hascart .floatcta{opacity:0; pointer-events:none;}
 </div>
 
 <div class="rc-card" id="rc-card"></div>
+
+<section class="rc-past">
+  <div class="l">
+    <h3>See our past issues and all previous sponsors</h3>
+    <p>Every issue we have sent is online, with the brands that paid to be in them. Read a
+    few and see what your slot actually looks like before you book one.</p>
+  </div>
+  <a href="https://news.workspace6.io" target="_blank" rel="noopener">Read past issues &rarr;</a>
+</section>
 
 <div id="rc-products"></div>
 
